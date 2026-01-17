@@ -51,6 +51,12 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
 
+                    <div th:if="${emailChangedMessage}" class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Votre email a été modifié. Veuillez vous reconnecter avec votre nouvel email.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
                     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill"></i>
                         <span th:text="${successMessage}"></span>

@@ -62,7 +62,13 @@
         </div>
     </div>
 </section>
-
+<div th:if="${accountDeletedMessage}" class="container mt-3">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        Votre compte a été supprimé avec succès. Vos données ont été effacées conformément au RGPD.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
 <section class="py-5">
     <div class="container">
         <h2 class="text-center mb-5">Nos Services</h2>

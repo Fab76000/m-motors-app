@@ -1,6 +1,8 @@
 package com.mmotors.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -15,7 +17,12 @@ public class HomeController {
      */
 
     @GetMapping("/")
-    public String home() {
+    public String home(HttpServletRequest request, Model model) {
+        // Vérifier si c'est une suppression de compte
+        if (Boolean.TRUE.equals(request.getSession().getAttribute("accountDeleted"))) {
+            model.addAttribute("accountDeletedMessage", true);
+            request.getSession().removeAttribute("accountDeleted");
+        }
         return "index";
     }
 }
