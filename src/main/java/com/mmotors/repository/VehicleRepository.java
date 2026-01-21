@@ -47,8 +47,10 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
      */
     @Query("SELECT v FROM Vehicle v WHERE " +
             "(:type IS NULL OR v.type = :type) AND " +
-            "(:brand IS NULL OR LOWER(v.brand) LIKE LOWER(CONCAT('%', :brand, '%'))) AND " +
-            "(:maxPrice IS NULL OR v.price <= :maxPrice) AND " +
+            "(:brand IS NULL OR UPPER(v.brand) LIKE :brand) AND " +
+            "(:maxPrice IS NULL OR " +
+            "  (v.type = com.mmotors.entity.VehicleType.ACHAT AND v.price <= :maxPrice) OR " +
+            "  (v.type = com.mmotors.entity.VehicleType.LOCATION AND v.monthlyRent <= :maxPrice)) AND " +
             "v.status = :status")
     Page<Vehicle> searchVehicles(
             @Param("type") VehicleType type,
@@ -57,4 +59,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
             @Param("status") VehicleStatus status,
             Pageable pageable
     );
+
+    Long id(Long id);
 }

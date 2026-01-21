@@ -1,0 +1,55 @@
+package com.mmotors.service;
+
+import com.mmotors.entity.Vehicle;
+import com.mmotors.entity.VehicleStatus;
+import com.mmotors.entity.VehicleType;
+import com.mmotors.repository.VehicleRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+
+/**
+ * Service de gestion des véhicules
+ */
+
+@Service
+@RequiredArgsConstructor
+public class VehicleService {
+
+    private final VehicleRepository vehicleRepository;
+
+    /**
+     * Recherche des véhicules avec filtres et pagination
+     * @param type Type de véhicule (null= tous)
+     * @param brand Marque (null = toutes)
+     * @param maxPrice Prix maximum (null = pas de limite)
+     * @param page Numéro de page (0-indexed)
+     * @param size Nombre de résultats par page
+     * @Return Page de véhicules
+     */
+    public Page<Vehicle> searchVehicles(VehicleType type, String brand, BigDecimal maxPrice, int page, int size) {
+        String searchBrand = null;
+        if (brand != null && !brand.trim().isEmpty()) {
+            searchBrand = "%" + brand.trim().toUpperCase() + "%";
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return vehicleRepository.searchVehicles(type, searchBrand, maxPrice, VehicleStatus.DISPONIBLE, pageable);
+    }
+
+    /**
+     * Trouve un véhicule par son ID
+     * @param id Identifiant du véhicule
+     * @return Véhicule trouvé
+     */
+
+    public Vehicle findById(Long id) {
+        return vehicleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Véhicule non trouvé avec cet ID"));
+    }
+}

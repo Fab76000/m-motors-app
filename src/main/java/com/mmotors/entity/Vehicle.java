@@ -31,12 +31,12 @@ public class Vehicle {
 
     @NotBlank(message = "La marque est obligatoire")
     @Size(max = 50)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, columnDefinition = "VARCHAR(50)")
     private String brand;
 
     @NotBlank(message = "Le modèle est obligatoire")
     @Size(max = 50)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, columnDefinition = "VARCHAR(50)")
     private String model;
 
     @NotNull(message = "L'année est obligatoire")
@@ -51,7 +51,7 @@ public class Vehicle {
 
     @NotBlank(message = "Le type de carburant est obligatoire")
     @Size(max = 50)
-    @Column(name = "fuel_type", nullable = false, length = 50)
+    @Column(name = "fuel_type", nullable = false, length = 50, columnDefinition = "VARCHAR(50)")
     private String fuelType;
 
     @NotNull(message = "La puissance est obligatoire")
@@ -61,7 +61,7 @@ public class Vehicle {
 
     @NotBlank(message = "Le type de boîte est obligatoire")
     @Size(max = 20)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20)")
     private String gearbox;
 
     @NotNull(message = "Le nombre de portes est obligatoire")
@@ -71,7 +71,7 @@ public class Vehicle {
 
     @NotBlank(message = "La couleur est obligatoire")
     @Size(max = 50)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, columnDefinition = "VARCHAR(50)")
     private String color;
 
     @Column(precision = 10, scale = 2)
