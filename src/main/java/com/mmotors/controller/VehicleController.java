@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
@@ -60,4 +61,22 @@ public class VehicleController {
 
         return "search";
     }
+/**
+ * Page de détails d'un véhicule
+ * @param id Identifiant du véhicule
+ * @param model Modèle Spring MVC
+ * @return Vue details.html
+ */
+
+    @GetMapping("/vehicles/{id}")
+    public String vehicleDetails(@PathVariable Long id, Model model) {
+        try {
+            Vehicle vehicle = vehicleService.findById(id);
+            model.addAttribute("vehicle", vehicle);
+            return "details";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/vehicles?error=notfound";
+        }
+    }
+
 }
