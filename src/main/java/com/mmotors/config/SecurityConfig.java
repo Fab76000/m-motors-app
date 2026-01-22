@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
 
                         // Pages publiques (accessibles sans authentification)
-                        .requestMatchers("/", "/register","/error", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/","/about", "/register","/error", "/css/**", "/js/**", "/images/**").permitAll()
                         // Toutes les autres pages nécessitent une authentification
                         .anyRequest().authenticated()
                 )
