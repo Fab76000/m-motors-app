@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - M-Motors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-car-front-fill"></i> M-Motors
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/about">
+                        <i class="bi bi-info-circle"></i> À propos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/vehicles">
+                        <i class="bi bi-search"></i> Rechercher
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/profile">
+                        <i class="bi bi-person"></i> Mon Profil
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
+                    <a class="btn btn-outline-light btn-sm ms-2" href="/login">
+                        <i class="bi bi-box-arrow-in-right"></i> Connexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">À propos de M-Motors</h1>
+                <p class="lead">Votre partenaire de confiance pour l'achat et la location de véhicules d'occasion depuis 1987</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="bi bi-car-front-fill display-1"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <section class="mb-5">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <h2 class="text-primary mb-4">
+                            <i class="bi bi-clock-history"></i> Notre Histoire
+                        </h2>
+                        <p class="lead">
+                            Créée en 1987, M-Motors est née d'une passion pour l'automobile et d'une volonté de rendre accessible
+                            l'achat de véhicules d'occasion de qualité à tous.
+                        </p>
+                        <p>
+                            Au fil des décennies, nous avons su gagner la confiance de nos clients grâce à notre engagement
+                            constant envers la qualité, la transparence et le service. Aujourd'hui, avec <strong>800 employés dévoués</strong>
+                            et plus d'<strong>un million de clients satisfaits</strong> au niveau national, nous sommes fiers d'être
+                            devenus l'un des <strong>10 leaders du secteur</strong> en France.
+                        </p>
+                        <p>
+                            Notre succès repose sur un principe simple : <strong>placer la satisfaction client au cœur de tout ce que nous faisons</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="text-center text-primary mb-4">
+            <i class="bi bi-heart"></i> Nos Valeurs
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-shield-check display-3 text-primary"></i>
+                        </div>
+                        <h3 class="h5">Confiance</h3>
+                        <p class="text-muted">
+                            Transparence totale sur l'état de chaque véhicule, avec contrôles techniques approfondis
+                            et historique complet.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-star display-3 text-primary"></i>
+                        </div>
+                        <h3 class="h5">Qualité</h3>
+                        <p class="text-muted">
+                            Sélection rigoureuse de véhicules en excellent état mécanique, garantissant fiabilité
+                            et sécurité pour nos clients.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-people display-3 text-primary"></i>
+                        </div>
+                        <h3 class="h5">Proximité</h3>
+                        <p class="text-muted">
+                            Accompagnement personnalisé par nos conseillers experts qui vous aident à trouver
+                            le véhicule parfait pour vous.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="text-center text-primary mb-4">
+            <i class="bi bi-gear"></i> Nos Services
+        </h2>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="h5 text-primary">
+                            <i class="bi bi-cart-check"></i> Vente de véhicules d'occasion
+                        </h3>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="bi bi-check-circle text-success"></i> Large gamme de marques et modèles</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Véhicules contrôlés et garantis</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Essais routiers gratuits</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Solutions de financement adaptées</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Reprise de votre ancien véhicule</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h3 class="h5 text-primary">
+                            <i class="bi bi-calendar-check"></i> Location longue durée
+                        </h3>
+                        <ul class="list-unstyled mt-3">
+                            <li><i class="bi bi-check-circle text-success"></i> Assurance tous risques incluse</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Assistance dépannage 24/7</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Entretien et révisions inclus</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Contrôle technique pris en charge</li>
+                            <li><i class="bi bi-check-circle text-success"></i> Option d'achat en fin de contrat</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <div class="card shadow bg-primary text-white">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">
+                    <i class="bi bi-hand-thumbs-up"></i> Nos Engagements
+                </h2>
+                <div class="row g-4">
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-shield-fill-check display-4"></i>
+                        </div>
+                        <h4 class="h6">Garantie qualité</h4>
+                        <p class="small">Tous nos véhicules sont contrôlés par nos experts</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-headset display-4"></i>
+                        </div>
+                        <h4 class="h6">Service client</h4>
+                        <p class="small">Une équipe à votre écoute du lundi au samedi</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-cash-coin display-4"></i>
+                        </div>
+                        <h4 class="h6">Prix transparents</h4>
+                        <p class="small">Pas de frais cachés, tarifs clairs et compétitifs</p>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-lock-fill display-4"></i>
+                        </div>
+                        <h4 class="h6">Données sécurisées</h4>
+                        <p class="small">Protection RGPD de vos informations personnelles</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="text-center text-primary mb-4">
+            <i class="bi bi-graph-up"></i> M-Motors en Chiffres
+        </h2>
+        <div class="row g-4 text-center">
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="display-4 text-primary fw-bold">1987</h3>
+                        <p class="text-muted mb-0">Année de création</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="display-4 text-primary fw-bold">800</h3>
+                        <p class="text-muted mb-0">Employés dévoués</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="display-4 text-primary fw-bold">1M+</h3>
+                        <p class="text-muted mb-0">Clients satisfaits</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="display-4 text-primary fw-bold">Top 10</h3>
+                        <p class="text-muted mb-0">En France</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="text-center">
+        <div class="card shadow-sm">
+            <div class="card-body p-5">
+                <h2 class="mb-4">Prêt à trouver votre véhicule idéal ?</h2>
+                <p class="lead mb-4">Découvrez notre large sélection de véhicules d'occasion de qualité</p>
+                <a href="/vehicles" class="btn btn-primary btn-lg me-2">
+                    <i class="bi bi-search"></i> Voir nos véhicules
+                </a>
+                <a href="/register" class="btn btn-outline-primary btn-lg" sec:authorize="!isAuthenticated()">
+                    <i class="bi bi-person-plus"></i> Créer un compte
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
