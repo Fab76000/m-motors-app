@@ -103,7 +103,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mb-3">
-                            <a href="#" class="btn btn-primary btn-lg" th:if="${vehicle.status.name() == 'DISPONIBLE'}">
+                            <a th:href="@{/vehicles/{id}/depot-dossier(id=${vehicle.id})}" class="btn btn-primary btn-lg" th:if="${vehicle.status.name() == 'DISPONIBLE'}">
                                 <i class="bi bi-file-earmark-text"></i>
                                 <span th:text="${vehicle.type.name() == 'ACHAT'} ? 'Déposer un dossier d\'achat' : 'Déposer un dossier de location'">Déposer un dossier</span>
                             </a>
