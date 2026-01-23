@@ -14,15 +14,20 @@ public enum DocumentType {
      * Justificatif de domicile
      */
     JUSTIFICATIF_DOMICILE,
-/**
- * Avis d'imposition
-*/
+    /**
+    * Avis d'imposition
+    */
 
-AVIS_IMPOT,
+    AVIS_IMPOT,
 
-/**
-* Relevé d'identité bancaire
-*/
+    /**
+    * Relevé d'identité bancaire
+    */
 
-RIB
+    RIB,
+
+    /**
+     * Bulletin de salaire
+     */
+    BULLETIN_SALAIRE
 }
