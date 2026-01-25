@@ -1,6 +1,8 @@
 package com.mmotors.controller;
 
+import com.mmotors.entity.Dossier;
 import com.mmotors.entity.User;
+import com.mmotors.service.DossierService;
 import com.mmotors.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +21,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class ProfileController {
 
     private final UserService userService;
+    private final DossierService dossierService;
 
     /**
      * Page profil de l'utilisateur (après connexion)
      */
 
     @GetMapping("/profile")
-    public String profile(Authentication authentication, Model model) {
-        String email = authentication.getName();
-        User user = userService.findByEmail(email);
+    public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        List<Dossier> dossiers = dossierService.findByUser(user);
+
         model.addAttribute("user", user);
+        model.addAttribute("dossiers", dossiers);
         return "profile";
     }
 
