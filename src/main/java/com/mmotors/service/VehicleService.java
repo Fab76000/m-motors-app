@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Service de gestion des véhicules
@@ -52,4 +53,41 @@ public class VehicleService {
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Véhicule non trouvé avec cet ID"));
     }
+
+    /**
+     * Compte le nombre total de véhicules
+     * @returb Nombre de véhicules
+     */
+
+    public long count() {
+        return vehicleRepository.count();
+    }
+
+    /**
+     * Compte le nombre de véhicules par statut
+     * @param status Statut recherché
+     * @return Nombre de véhicules
+     */
+    public long countByStatus(VehicleStatus status) {
+        return vehicleRepository.countByStatus(status);
+    }
+        /**
+         * Sauvegarde un véhicule
+         * @param vehicle Véhicule à sauvegarder
+         * @return Véhicule sauvegardé
+         */
+
+        public Vehicle save (Vehicle vehicle) {
+            return vehicleRepository.save(vehicle);
+        }
+
+    /**
+     * Récupère tous les véhicules
+     * @return Liste de tous les véhicules
+     */
+
+    public List<Vehicle> findAll() {
+        return vehicleRepository.findAll();
+    }
+
 }

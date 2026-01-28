@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un véhicule - M-Motors Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin">
+            <i class="bi bi-shield-lock"></i> M-Motors Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">
+                        <i class="bi bi-speedometer2"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/vehicles">
+                        <i class="bi bi-car-front"></i> Véhicules
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dossiers">
+                        <i class="bi bi-file-earmark-text"></i> Dossiers
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> Retour au site
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="mb-4">
+        <a href="/admin/vehicles" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour à la liste
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">
+                <i class="bi bi-plus-circle text-primary"></i> Ajouter un véhicule
+            </h1>
+        </div>
+    </div>
+
+    <form th:action="@{/admin/vehicles/add}" method="post">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-tag"></i> Type de véhicule
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="type" name="type" required onchange="togglePriceFields()">
+                        <option value="">Sélectionnez le type</option>
+                        <option value="ACHAT">À vendre</option>
+                        <option value="LOCATION">Location longue durée</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i> Informations générales
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Marque -->
+                    <div class="col-md-6">
+                        <label for="brand" class="form-label">Marque <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="brand" name="brand" required
+                               placeholder="Ex: Geupeot, Nerault, Troën...">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="model" class="form-label">Modèle <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="model" name="model" required
+                               placeholder="Ex: 308, Clio, C4...">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="year" class="form-label">Année <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="year" name="year" required
+                               min="2000" max="2026" placeholder="2023">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="mileage" class="form-label">Kilométrage (km) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="mileage" name="mileage" required
+                               min="0" placeholder="50000">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="color" class="form-label">Couleur <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="color" name="color" required
+                               placeholder="Ex: Blanc, Noir, Gris...">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="fuelType" class="form-label">Carburant <span class="text-danger">*</span></label>
+                        <select class="form-select" id="fuelType" name="fuelType" required>
+                            <option value="">Sélectionnez</option>
+                            <option value="Essence">Essence</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Hybride">Hybride</option>
+                            <option value="Électrique">Électrique</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="power" class="form-label">Puissance (ch) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="power" name="power" required
+                               min="50" max="500" placeholder="110">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="gearbox" class="form-label">Boîte de vitesses <span class="text-danger">*</span></label>
+                        <select class="form-select" id="gearbox" name="gearbox" required>
+                            <option value="">Sélectionnez</option>
+                            <option value="Manuelle">Manuelle</option>
+                            <option value="Automatique">Automatique</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="doors" class="form-label">Nombre de portes <span class="text-danger">*</span></label>
+                        <select class="form-select" id="doors" name="doors" required>
+                            <option value="">Sélectionnez</option>
+                            <option value="3">3 portes</option>
+                            <option value="5">5 portes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4" id="priceCard" style="display: none;">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-cash-coin"></i> Prix de vente
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="price" class="form-label">Prix (€) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="price" name="price"
+                           min="1000" step="100" placeholder="18500">
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4" id="rentCard" style="display: none;">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar-range"></i> Loyer mensuel
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="monthlyRent" class="form-label">Loyer mensuel (€) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="monthlyRent" name="monthlyRent"
+                           min="100" step="10" placeholder="450">
+                    <small class="form-text text-muted">
+                        Inclut l'assurance, l'entretien, l'assistance et le contrôle technique.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-text"></i> Description
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description du véhicule <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="description" name="description" rows="5" required
+                              placeholder="Décrivez les caractéristiques, l'état et les équipements du véhicule..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+            <a href="/admin/vehicles" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-check-circle"></i> Ajouter le véhicule
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>

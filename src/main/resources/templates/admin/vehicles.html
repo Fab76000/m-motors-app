@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion véhicules - M-Motors Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin">
+            <i class="bi bi-shield-lock"></i> M-Motors Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">
+                        <i class="bi bi-speedometer2"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/vehicles">
+                        <i class="bi bi-car-front"></i> Véhicules
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dossiers">
+                        <i class="bi bi-file-earmark-text"></i> Dossiers
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> Retour au site
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid my-5">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">
+                <i class="bi bi-car-front text-primary"></i> Gestion des véhicules
+            </h1>
+            <p class="lead text-muted">
+                <span th:text="${vehicles.size()}">0</span> véhicule(s) au total
+            </p>
+        </div>
+        <div class="col-auto">
+            <a href="/admin/vehicles/add" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-lg"></i> Ajouter un véhicule
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${vehicles.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <p class="lead text-muted mt-3">Aucun véhicule dans la base de données</p>
+        <a href="/admin/vehicles/add" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Ajouter le premier véhicule
+        </a>
+    </div>
+
+    <div th:if="${!vehicles.isEmpty()}" class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Véhicule</th>
+                        <th>Année</th>
+                        <th>Km</th>
+                        <th>Prix/Loyer</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="vehicle : ${vehicles}">
+                        <td th:text="${vehicle.id}">1</td>
+
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${vehicle.type.name() == 'ACHAT'} ? 'bg-success' : 'bg-info'">
+                                        <span th:text="${vehicle.type.name() == 'ACHAT'} ? 'Achat' : 'Location'">Type</span>
+                                    </span>
+                        </td>
+
+                        <td>
+                            <strong th:text="${vehicle.brand + ' ' + vehicle.model}">Marque Modèle</strong>
+                            <br>
+                            <small class="text-muted" th:text="${vehicle.fuelType + ' - ' + vehicle.power + ' ch'}">Essence - 110 ch</small>
+                        </td>
+
+                        <td th:text="${vehicle.year}">2023</td>
+
+                        <td>
+                            <span th:text="${#numbers.formatInteger(vehicle.mileage, 0, 'WHITESPACE')}">50 000</span> km
+                        </td>
+
+                        <td>
+                                    <span th:if="${vehicle.type.name() == 'ACHAT'}" class="text-success fw-bold">
+                                        <span th:text="${#numbers.formatDecimal(vehicle.price, 0, 'WHITESPACE', 0, 'POINT')}">18 500</span> €
+                                    </span>
+                            <span th:if="${vehicle.type.name() == 'LOCATION'}" class="text-info fw-bold">
+                                        <span th:text="${#numbers.formatDecimal(vehicle.monthlyRent, 0, 'WHITESPACE', 0, 'POINT')}">450</span> €/mois
+                                    </span>
+                        </td>
+                        <td>
+                                    <span class="badge"
+                                          th:classappend="${vehicle.status.name() == 'DISPONIBLE'} ? 'bg-success' :
+                                                          (${vehicle.status.name() == 'RESERVE'} ? 'bg-warning text-dark' : 'bg-secondary')">
+                                        <span th:text="${vehicle.status.name() == 'DISPONIBLE'} ? 'Disponible' :
+                                                       (${vehicle.status.name() == 'RESERVE'} ? 'Réservé' : 'Vendu')">Statut</span>
+                                    </span>
+                        </td>
+
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-outline-primary" title="Voir détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <button type="button" class="btn btn-outline-secondary" title="Modifier" disabled>
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" title="Supprimer" disabled>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
