@@ -4,9 +4,7 @@ package com.mmotors.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Slf4j
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     /**
@@ -27,7 +26,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
 
                         // Pages publiques (accessibles sans authentification)
-                        .requestMatchers("/","/about", "/register","/error", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/","/about", "/register", "/vehicles", "/vehicles/**","/error", "/css/**", "/js/**", "/images/**").permitAll()
                         // Toutes les autres pages nécessitent une authentification
                         .anyRequest().authenticated()
                 )

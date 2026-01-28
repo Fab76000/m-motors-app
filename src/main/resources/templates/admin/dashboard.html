@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord Admin - M-Motors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin">
+            <i class="bi bi-shield-lock"></i> M-Motors Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin">
+                        <i class="bi bi-speedometer2"></i> Tableau de bord
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/vehicles">
+                        <i class="bi bi-car-front"></i> Véhicules
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dossiers">
+                        <i class="bi bi-file-earmark-text"></i> Dossiers
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> Retour au site
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid my-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">
+                <i class="bi bi-speedometer2 text-primary"></i> Tableau de bord
+            </h1>
+            <p class="lead text-muted">Vue d'ensemble de votre plateforme</p>
+        </div>
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="bi bi-car-front-fill display-3 text-primary"></i>
+                    </div>
+                    <h3 class="display-6 mb-0" th:text="${totalVehicles}">0</h3>
+                    <p class="text-muted mb-0">Total véhicules</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="bi bi-check-circle-fill display-3 text-success"></i>
+                    </div>
+                    <h3 class="display-6 mb-0" th:text="${disponibles}">0</h3>
+                    <p class="text-muted mb-0">Disponibles</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="bi bi-clock-fill display-3 text-warning"></i>
+                    </div>
+                    <h3 class="display-6 mb-0" th:text="${reserves}">0</h3>
+                    <p class="text-muted mb-0">Réservés</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="bi bi-x-circle-fill display-3 text-secondary"></i>
+                    </div>
+                    <h3 class="display-6 mb-0" th:text="${vendus}">0</h3>
+                    <p class="text-muted mb-0">Vendus</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-plus-circle"></i> Ajouter un véhicule
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Ajoutez un nouveau véhicule à la vente ou en location.</p>
+                    <a href="/admin/vehicles/add" class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i> Ajouter un véhicule
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check"></i> Gérer les dossiers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Consultez et validez les dossiers clients en attente.</p>
+                    <a href="/admin/dossiers" class="btn btn-success">
+                        <i class="bi bi-file-earmark-text"></i> Voir les dossiers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

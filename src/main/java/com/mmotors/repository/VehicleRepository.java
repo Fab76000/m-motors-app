@@ -61,4 +61,11 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     );
 
     Long id(Long id);
+
+    /**
+    * Compte le nombre de véhicules par statut
+    * @param status Statut recherché
+    * @return Nombre de véhicules
+    */
+    long countByStatus(VehicleStatus status);
 }
