@@ -2,7 +2,10 @@ package com.mmotors.repository;
 
 import com.mmotors.entity.Dossier;
 import com.mmotors.entity.DossierStatus;
+import com.mmotors.entity.DossierType;
 import com.mmotors.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -42,4 +45,19 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      * @return Nombre de dossiers
      */
     long countByUser(User user);
+
+    /**
+     * Recherche par statut avec pagination
+     */
+    Page<Dossier> findByStatus(DossierStatus status, Pageable pageable);
+
+    /**
+     * Recherche par type avec pagination
+     */
+    Page<Dossier> findByType(DossierType type, Pageable pageable);
+
+    /**
+     * Recherche par statut ET type avec pagination
+     */
+    Page<Dossier> findByStatusAndType(DossierStatus status, DossierType type, Pageable pageable);
 }

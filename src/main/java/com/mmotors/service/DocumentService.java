@@ -124,6 +124,8 @@ public class DocumentService {
      * @param dossier Dossier parent
      * @return Nombre de documents
      */
+
+    @Transactional(readOnly = true)
     public long countByDossier(Dossier dossier) {
         return documentRepository.countByDossier(dossier);
     }
