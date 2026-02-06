@@ -3,6 +3,8 @@ package com.mmotors.service;
 import com.mmotors.entity.*;
 import com.mmotors.repository.DossierRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +73,7 @@ public class DossierService {
      * @return Dossier trouvé
      */
 
+    @Transactional(readOnly = true)
     public Dossier findById(Long id) {
         return dossierRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Dossier non trouvé"));
@@ -82,6 +85,7 @@ public class DossierService {
      * @return Dossier trouvé
      */
 
+    @Transactional(readOnly = true)
     public Dossier findByReferenceNumber(String refernceNumber) {
         return dossierRepository.findByReferenceNumber(refernceNumber)
                 .orElseThrow(()-> new IllegalArgumentException("Dossier non trouvé"));
@@ -92,9 +96,30 @@ public class DossierService {
      * @param user Utilisateur
      * @return Liste des dossiers
      */
-
+    @Transactional(readOnly = true)
     public List<Dossier> findByUser(User user) {
         return dossierRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+
+    /**
+     * Recherche des dossiers avec filtres et pagination
+     *
+     * @param status Statut du dossier (null = tous)
+     * @param type Type du dossier (null = tous)
+     * @param pageable Pagination
+     * @return Page de dossiers
+     */
+    @Transactional(readOnly = true)
+    public Page<Dossier> searchDossiers(DossierStatus status, DossierType type, Pageable pageable) {
+        if (status == null && type == null) {
+            return dossierRepository.findAll(pageable);
+        } else if (status != null && type != null) {
+            return dossierRepository.findByStatusAndType(status, type, pageable);
+        } else if (status != null) {
+            return dossierRepository.findByStatus(status, pageable);
+        } else {
+            return dossierRepository.findByType(type, pageable);
+        }
     }
 }
 

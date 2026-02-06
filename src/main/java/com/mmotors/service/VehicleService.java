@@ -32,8 +32,9 @@ public class VehicleService {
      * @param maxPrice Prix maximum (null = pas de limite)
      * @param page Numéro de page (0-indexed)
      * @param size Nombre de résultats par page
-     * @Return Page de véhicules
+     * @return Page de véhicules
      */
+    @Transactional(readOnly = true)
     public Page<Vehicle> searchVehicles(VehicleType type, String brand, BigDecimal maxPrice, int page, int size) {
         String searchBrand = null;
         if (brand != null && !brand.trim().isEmpty()) {
@@ -49,7 +50,7 @@ public class VehicleService {
      * @param id Identifiant du véhicule
      * @return Véhicule trouvé
      */
-
+    @Transactional(readOnly = true)
     public Vehicle findById(Long id) {
         return vehicleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Véhicule non trouvé avec cet ID"));
@@ -57,9 +58,9 @@ public class VehicleService {
 
     /**
      * Compte le nombre total de véhicules
-     * @returb Nombre de véhicules
+     * @Return Nombre de véhicules
      */
-
+    @Transactional(readOnly = true)
     public long count() {
         return vehicleRepository.count();
     }
@@ -69,6 +70,7 @@ public class VehicleService {
      * @param status Statut recherché
      * @return Nombre de véhicules
      */
+    @Transactional(readOnly = true)
     public long countByStatus(VehicleStatus status) {
         return vehicleRepository.countByStatus(status);
     }
@@ -78,6 +80,7 @@ public class VehicleService {
          * @return Véhicule sauvegardé
          */
 
+        @Transactional
         public Vehicle save (Vehicle vehicle) {
             return vehicleRepository.save(vehicle);
         }
@@ -86,7 +89,7 @@ public class VehicleService {
      * Récupère tous les véhicules
      * @return Liste de tous les véhicules
      */
-
+    @Transactional(readOnly = true)
     public List<Vehicle> findAll() {
         return vehicleRepository.findAll();
     }

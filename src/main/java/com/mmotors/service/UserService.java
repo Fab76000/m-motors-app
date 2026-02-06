@@ -64,6 +64,7 @@ public class UserService {
      * @param email Email de l'utilisateur
      * @return Utilisateur trouvé ou null
      */
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Dossiers - M-Motors Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin">
+            <i class="bi bi-speedometer2"></i> M-Motors Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarAdmin">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">
+                        <i class="bi bi-house"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/vehicles">
+                        <i class="bi bi-car-front"></i> Véhicules
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/dossiers">
+                        <i class="bi bi-folder"></i> Dossiers
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex">
+                <a href="/" class="btn btn-outline-light me-2">
+                    <i class="bi bi-box-arrow-left"></i> Retour site
+                </a>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+<main>
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                <i class="bi bi-folder"></i> Gestion des Dossiers
+            </h2>
+            <p class="text-muted">
+                <span th:text="${totalItems}">0</span> dossier(s) au total
+            </p>
+        </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="/admin/dossiers" class="row g-3">
+                <div class="col-md-4">
+                    <label for="status" class="form-label">Statut</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Tous les statuts</option>
+                        <option th:each="s : ${statuses}"
+                                th:value="${s}"
+                                th:text="${s.name() == 'EN_COURS' ? 'En cours' : (s.name() == 'VALIDE' ? 'Validé' : 'Rejeté')}"
+                                th:selected="${selectedStatus != null && selectedStatus == s}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="type" class="form-label">Type</label>
+                    <select class="form-select" id="type" name="type">
+                        <option value="">Tous les types</option>
+                        <option th:each="t : ${types}"
+                                th:value="${t}"
+                                th:text="${t.name() == 'ACHAT' ? 'Achat' : 'Location'}"
+                                th:selected="${selectedType != null && selectedType == t}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="bi bi-funnel"></i> Filtrer
+                    </button>
+                    <a href="/admin/dossiers" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Client</th>
+                        <th>Véhicule</th>
+                        <th>Type</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(dossiers)}">
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mb-0">Aucun dossier trouvé</p>
+                        </td>
+                    </tr>
+                    <tr th:each="dossier : ${dossiers}">
+                        <td>
+                            <strong th:text="${dossier.referenceNumber}">DOSS-2026-00001</strong>
+                        </td>
+                        <td>
+                            <span th:text="${dossier.user.firstName + ' ' + dossier.user.lastName}">John Doe</span>
+                            <br>
+                            <small class="text-muted" th:text="${dossier.user.email}">john@example.com</small>
+                        </td>
+                        <td>
+                            <strong th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Peugeot 308</strong>
+                            <br>
+                            <small class="text-muted" th:text="${dossier.vehicle.year}">2023</small>
+                        </td>
+                        <td>
+                                <span class="badge"
+                                      th:classappend="${dossier.type.name() == 'ACHAT'} ? 'bg-success' : 'bg-info'">
+                                    <span th:text="${dossier.type.name() == 'ACHAT'} ? 'Achat' : 'Location'">Type</span>
+                                </span>
+                        </td>
+                        <td>
+                                <span class="badge"
+                                      th:classappend="${dossier.status.name() == 'EN_COURS'} ? 'bg-warning text-dark' :
+                                                      (${dossier.status.name() == 'VALIDE'} ? 'bg-success' : 'bg-danger')">
+                                  <span th:text="${dossier.status.name() == 'EN_COURS' ? 'En cours' :
+               (dossier.status.name() == 'VALIDE' ? 'Validé' : 'Rejeté')}">Statut</span></span></td>
+                        <td>
+                            <span th:text="${#temporals.format(dossier.createdAt, 'dd/MM/yyyy')}">01/01/2026</span>
+                            <br>
+                            <small class="text-muted" th:text="${#temporals.format(dossier.createdAt, 'HH:mm')}">14:30</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <!-- Boutons pour US 4.5 (prochaine étape) -->
+                                <button type="button" class="btn btn-outline-success"
+                                        th:disabled="${dossier.status.name() != 'EN_COURS'}"
+                                        title="Valider">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger"
+                                        th:disabled="${dossier.status.name() != 'EN_COURS'}"
+                                        title="Rejeter">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav th:if="${totalPages > 1}">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/dossiers(page=${currentPage - 1}, status=${selectedStatus}, type=${selectedType})}">
+                            Précédent
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/admin/dossiers(page=${i}, status=${selectedStatus}, type=${selectedType})}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{/admin/dossiers(page=${currentPage + 1}, status=${selectedStatus}, type=${selectedType})}">
+                            Suivant
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
