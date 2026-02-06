@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -88,6 +89,33 @@ public class VehicleService {
 
     public List<Vehicle> findAll() {
         return vehicleRepository.findAll();
+    }
+
+    /**
+     * Bascule un véhicule entre ACHAT et LOCATION
+     *
+     * @param id ID du véhicule
+     * @param newPriceOrRent Nouveau prix (si passage en ACHAT) ou loyer (si passage en LOCATION)
+     * @return Véhicule modifié
+     */
+    @Transactional
+    public Vehicle switchVehicleType(Long id, BigDecimal newPriceOrRent) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Véhicule non trouvé avec l'ID : " + id));
+
+        if (vehicle.getType() == VehicleType.ACHAT) {
+            // ACHAT → LOCATION
+            vehicle.setType(VehicleType.LOCATION);
+            vehicle.setPrice(null);
+            vehicle.setMonthlyRent(newPriceOrRent);
+        } else {
+            // LOCATION → ACHAT
+            vehicle.setType(VehicleType.ACHAT);
+            vehicle.setMonthlyRent(null);
+            vehicle.setPrice(newPriceOrRent);
+        }
+
+        return vehicleRepository.save(vehicle);
     }
 
 }

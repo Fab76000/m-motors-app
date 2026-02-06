@@ -5,11 +5,14 @@ import com.mmotors.entity.VehicleType;
 import com.mmotors.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 
@@ -77,6 +80,30 @@ public class VehicleController {
         } catch (IllegalArgumentException e) {
             return "redirect:/vehicles?error=notfound";
         }
+    }
+    /**
+     * Switch un véhicule entre ACHAT et LOCATION
+     */
+    @PostMapping("/admin/vehicles/{id}/switch")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String switchVehicleType(
+            @PathVariable Long id,
+            @RequestParam BigDecimal newPriceOrRent,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            Vehicle vehicle = vehicleService.switchVehicleType(id, newPriceOrRent);
+
+            String message = vehicle.getType() == VehicleType.ACHAT
+                    ? "Véhicule switché en ACHAT avec succès"
+                    : "Véhicule switché en LOCATION avec succès";
+
+            redirectAttributes.addFlashAttribute("success", message);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/admin/vehicles";
     }
 
 }
