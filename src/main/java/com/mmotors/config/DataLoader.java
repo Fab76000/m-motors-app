@@ -40,7 +40,7 @@ public class DataLoader {
         vehicleRepository.save(createVehicle(
             "Nerault", "Olic", 2021, 25000, "Diesel", 90, "Manuelle", 5, "Gris",
             new BigDecimal("16000"), null, VehicleType.ACHAT,
-            "Neraul Olic économique, faible consommation.",
+            "Nerault Olic économique, faible consommation.",
             "['/images/vehicles/nerault-olic.jpg']"
         ));
 
