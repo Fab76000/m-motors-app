@@ -3,8 +3,13 @@ package com.mmotors.controller;
 import com.mmotors.entity.Vehicle;
 import com.mmotors.entity.VehicleStatus;
 import com.mmotors.entity.VehicleType;
+import com.mmotors.repository.VehicleRepository;
 import com.mmotors.service.VehicleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +33,7 @@ import java.util.List;
 public class AdminController {
 
     private final VehicleService vehicleService;
+    private final VehicleRepository vehicleRepository;
 
     /**
      * Page d'accueil admin (dashboard)
@@ -88,7 +94,7 @@ public class AdminController {
             }
 
             if (vehicleType == VehicleType.LOCATION && (monthlyRent == null || monthlyRent.compareTo(BigDecimal.ZERO) <= 0)) {
-                throw new IllegalArgumentException("Le loyer mensuel est obligatoire pour un véhicule en location");
+                throw new IllegalArgumentException("La mensualité est obligatoire pour un véhicule en location");
             }
             Vehicle vehicle = new Vehicle();
             vehicle.setType(vehicleType);
@@ -127,10 +133,13 @@ public class AdminController {
          * @return Vue admin-vehicles.html
          */
         @GetMapping("/vehicles")
-        public String listVehicles (Model model){
-            List<Vehicle> vehicles = vehicleService.findAll();
-            model.addAttribute("vehicles", vehicles);
+        public String listVehicles(@RequestParam(defaultValue = "0") int page, Model model) {
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("id").descending());
+            Page<Vehicle> vehiclesPage = vehicleRepository.findAll(pageable);
+
+            model.addAttribute("vehicles", vehiclesPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", vehiclesPage.getTotalPages());
             return "admin/vehicles";
         }
     }
-

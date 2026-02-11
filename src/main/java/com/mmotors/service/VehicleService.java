@@ -98,7 +98,7 @@ public class VehicleService {
      * Bascule un véhicule entre ACHAT et LOCATION
      *
      * @param id ID du véhicule
-     * @param newPriceOrRent Nouveau prix (si passage en ACHAT) ou loyer (si passage en LOCATION)
+     * @param newPriceOrRent Nouveau prix (si passage en ACHAT) ou mensualité (si passage en LOCATION)
      * @return Véhicule modifié
      */
     @Transactional

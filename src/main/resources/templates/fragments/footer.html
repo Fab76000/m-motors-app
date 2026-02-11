@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Footer</title>
+</head>
+<body>
+
+<footer th:fragment="footer" class="bg-dark text-white mt-5 py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>
+                    <i class="bi bi-car-front-fill"></i> M-Motors
+                </h5>
+                <p class="text-white-50">
+                    Spécialiste de la vente et location de véhicules d'occasion depuis 1987.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h5>Contact</h5>
+                <p class="text-white-50 mb-1">
+                    <i class="bi bi-envelope"></i> contact@m-motors.fr
+                </p>
+                <p class="text-white-50 mb-1">
+                    <i class="bi bi-telephone"></i> xx xx xx xx xx
+                </p>
+                <p class="text-white-50">
+                    <i class="bi bi-geo-alt"></i> France
+                </p>
+            </div>
+        </div>
+        <hr class="border-secondary">
+        <div class="row">
+            <div class="col text-center text-white-50">
+                <small>
+                    © <span th:text="${#temporals.year(#temporals.createNow())}">2026</span> M-Motors. Tous droits réservés.
+                </small>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

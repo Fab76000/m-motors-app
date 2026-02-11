@@ -107,7 +107,7 @@ public class Vehicle {
             throw new IllegalStateException("Le prix est obligatoire pour un véhicule à vendre");
         }
         if (type == VehicleType.LOCATION && monthlyRent == null) {
-            throw new IllegalStateException("Le loyer mensuel est obligatoire pour un véhicule en location");
+            throw new IllegalStateException("La mensualité est obligatoire pour un véhicule en location");
         }
     }
 }

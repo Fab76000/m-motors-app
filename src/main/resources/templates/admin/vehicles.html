@@ -7,51 +7,13 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/admin">
-            <i class="bi bi-shield-lock"></i> M-Motors Admin
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin">
-                        <i class="bi bi-speedometer2"></i> Tableau de bord
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/admin/vehicles">
-                        <i class="bi bi-car-front"></i> Véhicules
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/dossiers">
-                        <i class="bi bi-file-earmark-text"></i> Dossiers
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">
-                        <i class="bi bi-house"></i> Retour au site
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">
-                        <i class="bi bi-box-arrow-right"></i> Déconnexion
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<body class="bg-ligh d-flex flex-column min-vh-100">
+<div th:replace="fragments/header :: header-admin"></div>
 
-<div class="container-fluid my-5">
+<main>
+    <div class="container-fluid my-5">
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill"></i>
         <span th:text="${successMessage}"></span>
@@ -93,7 +55,7 @@
                         <th>Véhicule</th>
                         <th>Année</th>
                         <th>Km</th>
-                        <th>Prix/Loyer</th>
+                        <th>Prix/Mensualité</th>
                         <th>Statut</th>
                         <th>Actions</th>
                     </tr>
@@ -171,8 +133,13 @@
                 </table>
             </div>
         </div>
+        <div class="card-footer bg-white" th:if="${totalPages > 1}">
+            <div th:replace="fragments/pagination :: pagination(${currentPage}, ${totalPages})"></div>
+        </div>
     </div>
 </div>
+</main>
+
 <div class="modal fade" id="switchModal" tabindex="-1" aria-labelledby="switchModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -211,7 +178,7 @@
 
                     <div class="alert alert-warning">
                         <i class="bi bi-exclamation-triangle"></i>
-                        <strong>Attention :</strong> Cette action va modifier le type du véhicule et remplacer le prix/loyer.
+                        <strong>Attention :</strong> Cette action va modifier le type du véhicule et remplacer le prix/mensualité.
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -225,43 +192,9 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function openSwitchModal(button) {
-        const vehicleId = button.getAttribute('data-vehicle-id');
-        const brand = button.getAttribute('data-vehicle-brand');
-        const model = button.getAttribute('data-vehicle-model');
-        const currentType = button.getAttribute('data-current-type');
-
-        // Mettre à jour l'info véhicule
-        document.getElementById('vehicleInfo').textContent = brand + ' ' + model;
-        document.getElementById('currentType').textContent = currentType === 'ACHAT' ? 'Achat' : 'Location';
-
-        // Déterminer le nouveau type et le label
-        document.getElementById('newType').textContent = currentType === 'ACHAT' ? 'Location' : 'Achat';
-
-        // Adapter le label du champ
-        const priceLabel = document.getElementById('priceLabel');
-        const priceHelp = document.getElementById('priceHelp');
-
-        if (currentType === 'ACHAT') {
-            // ACHAT → LOCATION
-            priceLabel.textContent = 'Loyer mensuel (€/mois)';
-            priceHelp.textContent = 'Entrez La le loyer mensuel en euros';
-            document.getElementById('newPriceOrRent').placeholder = 'Ex: 450';
-        } else {
-            // LOCATION → ACHAT
-            priceLabel.textContent = 'Prix de vente (€)';
-            priceHelp.textContent = 'Entrez le prix de vente en euros';
-            document.getElementById('newPriceOrRent').placeholder = 'Ex: 18500';
-        }
-
-        // Mettre à jour l'action du formulaire
-        const form = document.getElementById('switchForm');
-        form.action = '/admin/vehicles/' + vehicleId + '/switch';
-    }
-</script>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>

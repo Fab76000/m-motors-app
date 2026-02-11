@@ -21,20 +21,6 @@ import java.util.List;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
-    /**
-     * Recherche les véhicules par type
-     * @param type Type de véhicule (ACHAT ou LOCATION)
-     * @return Liste des véhicules du type spécifié
-     */
-    List<Vehicle> findByType(VehicleType type);
-
-    /**
-     * Recherche les véhicules disponibles par type et statut
-     * @param type Type de véhicule
-     * @param status Statut du véhicule
-     * @return Liste des véhicules correspondant aux critères
-     */
-    List<Vehicle> findByTypeAndStatus(VehicleType type, VehicleStatus status);
 
     /**
      * Recherche avec filtres multiples et pagination

@@ -1,5 +1,5 @@
 /**
- * Affiche/masque les champs prix/loyer selon le type de véhicule
+ * Affiche/masque les champs prix/mensualité selon le type de véhicule
  */
 function togglePriceFields() {
     const type = document.getElementById('type').value;
@@ -26,4 +26,52 @@ function togglePriceFields() {
         priceInput.required = false;
         rentInput.required = false;
     }
+}
+
+/**
+ * Ouvre la modal de switch et configure les champs selon le type actuel
+ * @param {HTMLElement} button - Le bouton cliqué contenant les data-attributes
+ */
+function openSwitchModal(button) {
+    const vehicleId = button.getAttribute('data-vehicle-id');
+    const brand = button.getAttribute('data-vehicle-brand');
+    const model = button.getAttribute('data-vehicle-model');
+    const currentType = button.getAttribute('data-current-type');
+
+    // Mettre à jour l'info véhicule
+    document.getElementById('vehicleInfo').textContent = brand + ' ' + model;
+
+    const currentTypeBadge = document.getElementById('currentType');
+    const newTypeBadge = document.getElementById('newType');
+
+    currentTypeBadge.textContent = currentType === 'ACHAT' ? 'Achat' : 'Location';
+
+    // Colorer le badge actuel
+    currentTypeBadge.className = 'badge ' + (currentType === 'ACHAT' ? 'bg-success' : 'bg-info');
+
+    // Déterminer le nouveau type et le label
+    newTypeBadge.textContent = currentType === 'ACHAT' ? 'Location' : 'Achat';
+
+    // Colorer le badge nouveau type
+    newTypeBadge.className = 'badge ' + (currentType === 'ACHAT' ? 'bg-info' : 'bg-success');
+
+    // Adapter le label du champ
+    const priceLabel = document.getElementById('priceLabel');
+    const priceHelp = document.getElementById('priceHelp');
+
+    if (currentType === 'ACHAT') {
+        // ACHAT → LOCATION
+        priceLabel.textContent = 'Mensualité (€/mois)';
+        priceHelp.textContent = 'Entrez la mensualité en euros';
+        document.getElementById('newPriceOrRent').placeholder = 'Ex: 450';
+    } else {
+        // LOCATION → ACHAT
+        priceLabel.textContent = 'Prix de vente (€)';
+        priceHelp.textContent = 'Entrez le prix de vente en euros';
+        document.getElementById('newPriceOrRent').placeholder = 'Ex: 18500';
+    }
+
+    // Mettre à jour l'action du formulaire
+    const form = document.getElementById('switchForm');
+    form.action = '/admin/vehicles/' + vehicleId + '/switch';
 }

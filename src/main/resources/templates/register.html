@@ -7,24 +7,13 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="bg-light">
+ <body class="bg-ligh d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="bi bi-car-front-fill"></i> M-Motors
-        </a>
-        <div class="ms-auto">
-            <a class="btn btn-outline-light btn-sm" href="/login">
-                <i class="bi bi-box-arrow-in-right"></i> Déjà inscrit ? Se connecter
-            </a>
-        </div>
-    </div>
-</nav>
-
-
-<div class="container my-5">
+<div th:replace="~{fragments/header :: header-client}"></div>
+<main>
+    <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
             <div class="card shadow">
@@ -133,8 +122,8 @@
         </div>
     </div>
 </div>
-
-<!-- Bootstrap 5 JS -->
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
