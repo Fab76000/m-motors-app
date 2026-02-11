@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Header</title>
+</head>
+<body>
+
+<!-- Header Client -->
+<header th:fragment="header-client">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-car-front-fill"></i> M-Motors
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarClient">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarClient">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vehicles">
+                            <i class="bi bi-search"></i> Rechercher
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <div sec:authorize="isAuthenticated()">
+                        <a href="/admin" class="btn btn-warning me-2" sec:authorize="hasRole('ADMIN')">
+                            <i class="bi bi-speedometer2"></i> Admin
+                        </a>
+
+                        <a href="/profile" class="btn btn-outline-light me-2">
+                            <i class="bi bi-person"></i>
+                            <span sec:authentication="name">User</span>
+                        </a>
+
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light">
+                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            </button>
+                        </form>
+                    </div>
+
+                    <div sec:authorize="!isAuthenticated()">
+                        <a href="/login" class="btn btn-outline-light me-2">
+                            <i class="bi bi-box-arrow-in-right"></i> Connexion
+                        </a>
+                        <a href="/register" class="btn btn-light">
+                            <i class="bi bi-person-plus"></i> Inscription
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<!-- Header Admin -->
+<header th:fragment="header-admin">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/admin">
+                <i class="bi bi-speedometer2"></i> M-Motors Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarAdmin">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">
+                            <i class="bi bi-house"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/vehicles">
+                            <i class="bi bi-car-front"></i> Véhicules
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dossiers">
+                            <i class="bi bi-folder"></i> Dossiers
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="/" class="btn btn-outline-light me-2">
+                        <i class="bi bi-box-arrow-left"></i> Retour site
+                    </a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger text-white">
+                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+</body>
+</html>

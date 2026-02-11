@@ -34,8 +34,8 @@ public class AdminDossierController {
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
-        // Pagination : 20 dossiers par page, triés par date de création décroissante
-        Pageable pageable = PageRequest.of(page, 20, Sort.by("createdAt").descending());
+        // Pagination : 10 dossiers par page, triés par date de création décroissante
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
 
         Page<Dossier> dossiersPage = dossierService.searchDossiers(status, type, pageable);
 
