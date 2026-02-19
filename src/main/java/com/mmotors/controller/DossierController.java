@@ -129,18 +129,48 @@ public class DossierController {
     /**
      * Page de confirmation après dépôt du dossier
      * @param dossierId ID du dossier
+     * @param userDetails Utilisateur connecté
      * @param model Modèle Spring MVC
      * @return Vue confirmation.html
      */
     @GetMapping("/dossiers/{dossierId}/confirmation")
-    public String confirmation(@PathVariable Long dossierId, Model model) {
+    public String confirmation(
+            @PathVariable Long dossierId,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model) {
         try {
+            User currentUser = userService.findByEmail(userDetails.getUsername());
+
             Dossier dossier = dossierService.findById(dossierId);
+
+            if (!dossier.getUser().getId().equals(currentUser.getId())) {
+                // Tentative d'accès non autorisé → 403 Forbidden
+                return "redirect:/profile?error=unauthorized";
+            }
+
             model.addAttribute("dossier", dossier);
             return "confirmation";
+
         } catch (IllegalArgumentException e) {
-            return "redirect:/profile";
+            return "redirect:/profile?error=notfound";
         }
     }
+    /**
+     * Affiche la liste des dossiers de l'utilisateur connecté
+     * @param userDetails Utilisateur connecté
+     * @param model Modèle Spring MVC
+     * @return Vue dossiers.html
+     */
+    @GetMapping("/dossiers")
+    public String myDossiers(
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model) {
+        User user = userService.findByEmail(userDetails.getUsername());
+        java.util.List<Dossier> dossiers = dossierService.findByUser(user);
 
+        model.addAttribute("user", user);
+        model.addAttribute("dossiers", dossiers);
+
+        return "dossiers";
+    }
 }
