@@ -11,6 +11,19 @@
 </head>
  <body class="bg-ligh d-flex flex-column min-vh-100">
 <div th:replace="~{fragments/header :: header-client}"></div>
+<div th:if="${param.error != null}" class="container mt-3">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <strong>Accès refusé :</strong>
+        <span th:if="${param.error[0] == 'unauthorized'}">
+            Vous n'êtes pas autorisé à accéder à ce dossier.
+        </span>
+        <span th:if="${param.error[0] == 'notfound'}">
+            Le dossier demandé n'existe pas.
+        </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+</div>
 <main>
     <div class="container my-5">
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
