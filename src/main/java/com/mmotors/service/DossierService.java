@@ -2,7 +2,9 @@ package com.mmotors.service;
 
 import com.mmotors.entity.*;
 import com.mmotors.repository.DossierRepository;
+import com.mmotors.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,11 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DossierService {
 
     private final DossierRepository dossierRepository;
+    private final VehicleRepository vehicleRepository;
 
     /**
      * Crée un nouveau dossier
@@ -120,6 +124,71 @@ public class DossierService {
         } else {
             return dossierRepository.findByType(type, pageable);
         }
+    }
+
+    /**
+     * Valide un dossier (admin uniquement)
+     * Change le statut EN_COURS -> VALIDE
+     * Change le statut du véhicule DISPONIBLE -> RESERVE
+     *
+     * @param dossierId ID du dossier
+     * @return Dossier validé
+     * @throws IllegalArgumentException si le dossier n'existe pas ou n'a pas le statut EN_COURS
+     */
+
+    @Transactional
+    public Dossier validateDossier(Long dossierId) {
+        Dossier dossier = dossierRepository.findById(dossierId)
+                .orElseThrow(() -> new IllegalArgumentException("Dossier non trouvé : " + dossierId));
+        if (dossier.getStatus() != DossierStatus.EN_COURS) {
+            throw new IllegalArgumentException("Seuls les dossiers EN_COURS peuvent être validés");
+        }
+        dossier.setStatus(DossierStatus.VALIDE);
+
+        Vehicle vehicle = dossier.getVehicle();
+        vehicle.setStatus(VehicleStatus.RESERVE);
+        vehicleRepository.save(vehicle);
+
+        Dossier savedDossier = dossierRepository.save(dossier);
+        log.info("Dossier validé : {} (véhicule {} passé en RESERVE)",
+                dossier.getReferenceNumber(), vehicle.getId());
+
+        return savedDossier;
+    }
+
+    /**
+     * Rejette un dossier (admin uniquement)
+     * Change le statut EN_COURS -> REJETE
+     * ENregistre la raison du rejet
+     *
+     * @param dossierId ID du dossier
+     * @param rejectionReason Raison du rejet
+     * @return Dossier rejeté
+     * @throws IllegalArgumentException si le dossier n'existe pas ou n'est pas EN_COURS
+ */
+    @Transactional
+    public Dossier rejectDossier(Long dossierId, String rejectionReason) {
+        if (rejectionReason == null || rejectionReason.trim().isEmpty()) {
+            throw new IllegalArgumentException("La raison du rejet est obligatoire");
+        }
+
+        Dossier dossier = dossierRepository.findById(dossierId)
+                .orElseThrow(() -> new IllegalArgumentException("Dossier non trouvé : " + dossierId));
+
+        if (dossier.getStatus() != DossierStatus.EN_COURS) {
+            throw new IllegalArgumentException("Seuls les dossiers EN_COURS peuvent être rejetés");
+        }
+
+        dossier.setStatus(DossierStatus.REJETE);
+        dossier.setRejectionReason(rejectionReason);
+
+
+        Dossier savedDossier = dossierRepository.save(dossier);
+
+        log.info("Dossier rejeté : {} (raison: {})",
+                dossier.getReferenceNumber(), rejectionReason);
+
+        return savedDossier;
     }
 }
 
