@@ -102,7 +102,7 @@
                             <small class="text-muted" th:text="${dossier.user.email}">john@example.com</small>
                         </td>
                         <td>
-                            <strong th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Peugeot 308</strong>
+                            <strong th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Geupeot 803</strong>
                             <br>
                             <small class="text-muted" th:text="${dossier.vehicle.year}">2023</small>
                         </td>
@@ -124,19 +124,36 @@
                             <small class="text-muted" th:text="${#temporals.format(dossier.createdAt, 'HH:mm')}">14:30</small>
                         </td>
                         <td>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <!-- Boutons pour US 4.5 (prochaine étape) -->
-                                <button type="button" class="btn btn-outline-success"
-                                        th:disabled="${dossier.status.name() != 'EN_COURS'}"
-                                        title="Valider">
-                                    <i class="bi bi-check-circle"></i>
+                            <div th:if="${dossier.status != null}">
+                                <button th:if="${dossier.status.name() == 'EN_COURS'}"
+                                        type="button"
+                                        class="btn btn-sm btn-success"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#validateModal"
+                                        th:data-dossier-id="${dossier.id}"
+                                        th:data-dossier-ref="${dossier.referenceNumber}"
+                                        th:data-vehicle-info="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}"
+                                        onclick="openValidateModal(this)">
+                                    <i class="bi bi-check-circle"></i> Valider
                                 </button>
-                                <button type="button" class="btn btn-outline-danger"
-                                        th:disabled="${dossier.status.name() != 'EN_COURS'}"
-                                        title="Rejeter">
-                                    <i class="bi bi-x-circle"></i>
+                                <button th:if="${dossier.status.name() == 'EN_COURS'}"
+                                        type="button"
+                                        class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#rejectModal"
+                                        th:data-dossier-id="${dossier.id}"
+                                        th:data-dossier-ref="${dossier.referenceNumber}"
+                                        onclick="openRejectModal(this)">
+                                    <i class="bi bi-x-circle"></i> Rejeter
                                 </button>
+                                <span th:if="${dossier.status.name() != 'EN_COURS'}" class="text-muted">
+            <i class="bi bi-lock"></i>
+            <span th:text="${dossier.status.name() == 'VALIDE' ? 'Validé' : 'Rejeté'}">Traité</span>
+        </span>
                             </div>
+                            <span th:if="${dossier.status == null}" class="text-danger">
+        <i class="bi bi-exclamation-triangle"></i> Erreur données
+    </span>
                         </td>
                     </tr>
                     </tbody>
@@ -148,8 +165,103 @@
         </div>
     </div>
 </div>
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/dossiers/0/reject}" method="post" id="rejectForm">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="rejectModalLabel">
+                            <i class="bi bi-x-circle"></i> Rejeter le dossier
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3">
+                            Dossier : <strong id="dossierRef">DOSS-2026-00001</strong>
+                        </p>
+
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Attention :</strong> Cette action est irréversible.
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rejectionReason" class="form-label">
+                                Raison du rejet <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                    class="form-control"
+                                    id="rejectionReason"
+                                    name="rejectionReason"
+                                    rows="4"
+                                    required
+                                    placeholder="Ex: Documents illisibles, justificatif de domicile manquant..."></textarea>
+                            <div class="form-text">
+                                Le client verra ce message dans son espace personnel.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Rejeter le dossier
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="validateModal" tabindex="-1" aria-labelledby="validateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/dossiers/0/validate}" method="post" id="validateForm">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="validateModalLabel">
+                            <i class="bi bi-check-circle"></i> Valider le dossier
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3">
+                            Dossier : <strong id="validateDossierRef">DOSS-2026-00001</strong>
+                        </p>
+                        <p class="mb-3">
+                            Véhicule : <strong id="validateVehicleInfo">Geupeot 803</strong>
+                        </p>
+
+                        <div class="alert alert-success">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Effets de la validation :</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Le dossier passera au statut <strong>VALIDÉ</strong></li>
+                                <li>Le véhicule sera marqué <strong>RÉSERVÉ</strong></li>
+                                <li>Le client pourra voir le changement dans son espace</li>
+                            </ul>
+                        </div>
+
+                        <p class="text-muted mb-0">
+                            <small>Cette action est irréversible.</small>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Confirmer la validation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </main>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="/js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
