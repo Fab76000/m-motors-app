@@ -42,6 +42,9 @@ public class DocumentServiceTest {
     private MultipartFile invalidFile;
     private MultipartFile oversizedFile;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         User testUser = new User();
@@ -98,6 +101,9 @@ public class DocumentServiceTest {
 
     // ==================== TESTS saveDocument ====================
 
+    /**
+     * Save document valid pdf file saves successfully.
+     */
     @Test
     @DisplayName("saveDocument - Upload fichier PDF valide")
     void saveDocument_ValidPdfFile_SavesSuccessfully() {
@@ -117,6 +123,9 @@ public class DocumentServiceTest {
         verify(documentRepository).save(any(Document.class));
     }
 
+    /**
+     * Save document empty file throws exception.
+     */
     @Test
     @DisplayName("saveDocument - Fichier vide rejeté")
     void saveDocument_EmptyFile_ThrowsException() {
@@ -134,6 +143,9 @@ public class DocumentServiceTest {
         verify(documentRepository, never()).save(any(Document.class));
     }
 
+    /**
+     * Save document oversized file throws exception.
+     */
     @Test
     @DisplayName("saveDocument - Fichier trop volumineux rejeté (> 5 MB)")
     void saveDocument_OversizedFile_ThrowsException() {
@@ -144,6 +156,9 @@ public class DocumentServiceTest {
         verify(documentRepository, never()).save(any(Document.class));
     }
 
+    /**
+     * Save document invalid file type throws exception.
+     */
     @Test
     @DisplayName("saveDocument - Type de fichier non autorisé rejeté")
     void saveDocument_InvalidFileType_ThrowsException() {
@@ -154,6 +169,9 @@ public class DocumentServiceTest {
         verify(documentRepository, never()).save(any(Document.class));
     }
 
+    /**
+     * Save document valid jpg file saves successfully.
+     */
     @Test
     @DisplayName("saveDocument - Upload fichier image JPG valide")
     void saveDocument_ValidJpgFile_SavesSuccessfully() {
@@ -185,6 +203,9 @@ public class DocumentServiceTest {
 
     // ==================== TESTS findByDossier ====================
 
+    /**
+     * Find by dossier returns dossier documents.
+     */
     @Test
     @DisplayName("findByDossier - Retourne les documents du dossier")
     void findByDossier_ReturnsDossierDocuments() {
@@ -210,6 +231,9 @@ public class DocumentServiceTest {
         verify(documentRepository).findByDossier(testDossier);
     }
 
+    /**
+     * Find by dossier no documents returns empty list.
+     */
     @Test
     @DisplayName("findByDossier - Aucun document pour le dossier")
     void findByDossier_NoDocuments_ReturnsEmptyList() {
@@ -225,6 +249,9 @@ public class DocumentServiceTest {
 
     // ==================== TESTS countByDossier ====================
 
+    /**
+     * Count by dossier returns document count.
+     */
     @Test
     @DisplayName("countByDossier - Retourne le nombre de documents")
     void countByDossier_ReturnsDocumentCount() {
@@ -237,6 +264,9 @@ public class DocumentServiceTest {
         verify(documentRepository).countByDossier(testDossier);
     }
 
+    /**
+     * Count by dossier no documents returns zero.
+     */
     @Test
     @DisplayName("countByDossier - Aucun document retourne zéro")
     void countByDossier_NoDocuments_ReturnsZero() {

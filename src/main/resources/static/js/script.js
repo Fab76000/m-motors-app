@@ -104,3 +104,57 @@ function openValidateModal(button) {
     const form = document.getElementById('validateForm');
     form.action = '/admin/dossiers/' + dossierId + '/validate';
 }
+
+/**
+ * Gère l'affichage/masquage des champs prix/mensualité selon le type (radio buttons)
+ * Utilisé dans edit-vehicle.html
+ */
+function initVehicleTypeToggle() {
+    const radios = document.querySelectorAll('input[name="type"]');
+
+    if (radios.length === 0) return;
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const priceField = document.getElementById('priceField');
+            const monthlyRentField = document.getElementById('monthlyRentField');
+            const priceInput = document.getElementById('price');
+            const rentInput = document.getElementById('monthlyRent');
+
+            if (this.value === 'ACHAT') {
+                priceField.style.display = 'block';
+                monthlyRentField.style.display = 'none';
+                priceInput.required = true;
+                rentInput.required = false;
+            } else {
+                priceField.style.display = 'none';
+                monthlyRentField.style.display = 'block';
+                priceInput.required = false;
+                rentInput.required = true;
+            }
+        });
+    });
+
+    // Trigger au chargement de la page
+    const checkedRadio = document.querySelector('input[name="type"]:checked');
+    if (checkedRadio) {
+        checkedRadio.dispatchEvent(new Event('change'));
+    }
+}
+
+// Initialiser au chargement du DOM
+document.addEventListener('DOMContentLoaded', initVehicleTypeToggle);
+
+/**
+ * Ouvre la modal de suppression de véhicule
+ * @param button - Bouton "Supprimer" cliqué
+ */
+function openDeleteModal(button) {
+    const vehicleId = button.getAttribute('data-vehicle-id');
+    // Mettre à jour les infos dans la modal
+    document.getElementById('deleteVehicleInfo').textContent = button.getAttribute('data-vehicle-info');
+
+    // Mettre à jour l'action du formulaire
+    const form = document.getElementById('deleteForm');
+    form.action = '/admin/vehicles/' + vehicleId + '/delete';
+}

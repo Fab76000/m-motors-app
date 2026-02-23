@@ -13,14 +13,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 /**
  * Contrôleur pour le backoffice administrateur
@@ -142,4 +139,103 @@ public class AdminController {
             model.addAttribute("totalPages", vehiclesPage.getTotalPages());
             return "admin/vehicles";
         }
+
+    /**
+     * Affiche le formulaire de modification d'un véhicule
+     * @param id ID du véhicule
+     * @param model Modèle Spring MVC
+     * @return Vue admin/edit-vehicle.html
+     */
+    @GetMapping("/vehicles/{id}/edit")
+    public String showEditVehicleForm(@PathVariable Long id, Model model) {
+        try {
+            Vehicle vehicle = vehicleService.findById(id);
+            model.addAttribute("vehicle", vehicle);
+            return "admin/edit-vehicle";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/vehicles?error=notfound";
+        }
     }
+
+    /**
+     * Modification d'un véhicule
+     */
+    @PostMapping("/vehicles/{id}/edit")
+    public String editVehicle(
+            @PathVariable Long id,
+            @RequestParam String type,
+            @RequestParam String brand,
+            @RequestParam String model,
+            @RequestParam Integer year,
+            @RequestParam Integer mileage,
+            @RequestParam String fuelType,
+            @RequestParam Integer power,
+            @RequestParam String gearbox,
+            @RequestParam Integer doors,
+            @RequestParam String color,
+            @RequestParam(required = false) BigDecimal price,
+            @RequestParam(required = false) BigDecimal monthlyRent,
+            @RequestParam String description,
+            @RequestParam String status,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            VehicleType vehicleType = VehicleType.valueOf(type);
+            VehicleStatus vehicleStatus = VehicleStatus.valueOf(status);
+
+            if (vehicleType == VehicleType.ACHAT && (price == null || price.compareTo(BigDecimal.ZERO) <= 0)) {
+                throw new IllegalArgumentException("Le prix est obligatoire pour un véhicule à vendre");
+            }
+            if (vehicleType == VehicleType.LOCATION && (monthlyRent == null || monthlyRent.compareTo(BigDecimal.ZERO) <= 0)) {
+                throw new IllegalArgumentException("La mensualité est obligatoire pour un véhicule en location");
+            }
+
+            Vehicle updatedVehicle = new Vehicle();
+            updatedVehicle.setType(vehicleType);
+            updatedVehicle.setBrand(brand);
+            updatedVehicle.setModel(model);
+            updatedVehicle.setYear(year);
+            updatedVehicle.setMileage(mileage);
+            updatedVehicle.setFuelType(fuelType);
+            updatedVehicle.setPower(power);
+            updatedVehicle.setGearbox(gearbox);
+            updatedVehicle.setDoors(doors);
+            updatedVehicle.setColor(color);
+            updatedVehicle.setPrice(price);
+            updatedVehicle.setMonthlyRent(monthlyRent);
+            updatedVehicle.setDescription(description);
+            updatedVehicle.setStatus(vehicleStatus);
+
+            vehicleService.updateVehicle(id, updatedVehicle);
+
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Véhicule modifié avec succès !");
+            return "redirect:/admin/vehicles";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/vehicles/" + id + "/edit";
+        }
+    }
+
+    /**
+     * Supprime un véhicule
+     */
+    @PostMapping("/vehicles/{id}/delete")
+    public String deleteVehicle(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes
+    ) {
+        try {
+            vehicleService.deleteVehicle(id);
+
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Véhicule supprimé avec succès !");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/admin/vehicles";
+    }
+}

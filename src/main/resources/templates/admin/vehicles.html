@@ -102,11 +102,11 @@
 
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
-                                <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-outline-primary" title="Voir détails">
+                                <a th:href="@{/vehicles/{id}(id=${vehicle.id})}"
+                                   class="btn btn-outline-primary"
+                                   title="Voir détails">
                                     <i class="bi bi-eye"></i>
                                 </a>
-
-                                <!-- Bouton pour switch entre Achat et Location -->
                                 <button type="button"
                                         class="btn btn-outline-warning"
                                         title="Changer le type"
@@ -119,11 +119,20 @@
                                         onclick="openSwitchModal(this)">
                                     <i class="bi bi-arrow-left-right"></i>
                                 </button>
-
-                                <button type="button" class="btn btn-outline-secondary" title="Modifier" disabled>
+                                <a th:href="@{/admin/vehicles/{id}/edit(id=${vehicle.id})}"
+                                   class="btn btn-outline-secondary"
+                                   title="Modifier">
                                     <i class="bi bi-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-danger" title="Supprimer" disabled>
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger"
+                                        title="Supprimer"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        th:data-vehicle-id="${vehicle.id}"
+                                        th:data-vehicle-info="${vehicle.brand + ' ' + vehicle.model}"
+                                        onclick="openDeleteModal(this)">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -185,6 +194,44 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                     <button type="submit" class="btn btn-warning">
                         <i class="bi bi-arrow-left-right"></i> Changer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/admin/vehicles/0/delete}" method="post" id="deleteForm">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-trash"></i> Supprimer le véhicule
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">
+                        Véhicule : <strong id="deleteVehicleInfo">Peugeot 308</strong>
+                    </p>
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Attention :</strong> Cette action est <strong>irréversible</strong>.
+                        <ul class="mb-0 mt-2">
+                            <li>Le véhicule sera définitivement supprimé</li>
+                            <li>Impossible si des dossiers sont liés</li>
+                        </ul>
+                    </div>
+
+                    <p class="mb-0">Êtes-vous sûr de vouloir continuer ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Supprimer définitivement
                     </button>
                 </div>
             </form>
