@@ -1,6 +1,7 @@
 package com.mmotors.service;
 import com.mmotors.entity.*;
 import com.mmotors.repository.DossierRepository;
+import com.mmotors.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests unitaires pour DossierService
+ * The type Dossier service test.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("DossierService Tests")
@@ -29,6 +31,9 @@ public class DossierServiceTest {
 
     @Mock
     private DossierRepository dossierRepository;
+
+    @Mock
+    private VehicleRepository vehicleRepository;
 
     @InjectMocks
     private DossierService dossierService;
@@ -39,6 +44,9 @@ public class DossierServiceTest {
     private Dossier testDossierAchat;
     private Dossier testDossierLocation;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         // Utilisateur de test
@@ -93,6 +101,9 @@ public class DossierServiceTest {
 
     // ==================== TESTS createDossier ====================
 
+    /**
+     * Create dossier type achat saves successfully.
+     */
     @Test
     @DisplayName("createDossier - Création dossier ACHAT avec succès")
     void createDossier_TypeAchat_SavesSuccessfully() {
@@ -115,6 +126,9 @@ public class DossierServiceTest {
         verify(dossierRepository).save(any(Dossier.class));
     }
 
+    /**
+     * Create dossier type location saves successfully.
+     */
     @Test
     @DisplayName("createDossier - Création dossier LOCATION avec succès")
     void createDossier_TypeLocation_SavesSuccessfully() {
@@ -136,6 +150,9 @@ public class DossierServiceTest {
         verify(dossierRepository).save(any(Dossier.class));
     }
 
+    /**
+     * Create dossier generates valid reference number.
+     */
     @Test
     @DisplayName("createDossier - Génère un numéro de référence valide")
     void createDossier_GeneratesValidReferenceNumber() {
@@ -161,6 +178,9 @@ public class DossierServiceTest {
 
     // ==================== TESTS findById ====================
 
+    /**
+     * Find by id dossier exists returns dossier.
+     */
     @Test
     @DisplayName("findById - Dossier trouvé")
     void findById_DossierExists_ReturnsDossier() {
@@ -174,6 +194,9 @@ public class DossierServiceTest {
         verify(dossierRepository).findById(1L);
     }
 
+    /**
+     * Find by id dossier not found throws exception.
+     */
     @Test
     @DisplayName("findById - Dossier non trouvé")
     void findById_DossierNotFound_ThrowsException() {
@@ -188,6 +211,9 @@ public class DossierServiceTest {
 
     // ==================== TESTS findByReferenceNumber ====================
 
+    /**
+     * Find by reference number dossier exists returns dossier.
+     */
     @Test
     @DisplayName("findByReferenceNumber - Dossier trouvé")
     void findByReferenceNumber_DossierExists_ReturnsDossier() {
@@ -201,6 +227,9 @@ public class DossierServiceTest {
         verify(dossierRepository).findByReferenceNumber("DOSS-2026-00001");
     }
 
+    /**
+     * Find by reference number dossier not found throws exception.
+     */
     @Test
     @DisplayName("findByReferenceNumber - Dossier non trouvé")
     void findByReferenceNumber_DossierNotFound_ThrowsException() {
@@ -216,6 +245,9 @@ public class DossierServiceTest {
 
     // ==================== TESTS findByUser ====================
 
+    /**
+     * Find by user returns user dossiers.
+     */
     @Test
     @DisplayName("findByUser - Retourne les dossiers de l'utilisateur")
     void findByUser_ReturnsUserDossiers() {
@@ -232,6 +264,9 @@ public class DossierServiceTest {
         verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
     }
 
+    /**
+     * Find by user no dossiers returns empty list.
+     */
     @Test
     @DisplayName("findByUser - Aucun dossier pour l'utilisateur")
     void findByUser_NoDossiers_ReturnsEmptyList() {
@@ -244,4 +279,95 @@ public class DossierServiceTest {
         assertThat(result).isEmpty();
         verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
     }
+
+    // ==================== TESTS validateDossier ====================
+
+    /**
+     * Test validate dossier success.
+     */
+    @Test
+    void testValidateDossier_Success() {
+        Long dossierId = 1L;
+        Dossier dossier = new Dossier();
+        dossier.setId(dossierId);
+        dossier.setReferenceNumber("DOSS-2026-00001");
+        dossier.setStatus(DossierStatus.EN_COURS);
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(10L);
+        vehicle.setStatus(VehicleStatus.DISPONIBLE);
+        dossier.setVehicle(vehicle);
+
+        when(dossierRepository.findById(dossierId)).thenReturn(Optional.of(dossier));
+        when(dossierRepository.save(any(Dossier.class))).thenReturn(dossier);
+        when(vehicleRepository.save(any(Vehicle.class))).thenReturn(vehicle);
+
+        Dossier result = dossierService.validateDossier(dossierId);
+
+        assertNotNull(result);
+        assertEquals(DossierStatus.VALIDE, result.getStatus());
+        assertEquals(VehicleStatus.RESERVE, vehicle.getStatus());
+        verify(dossierRepository).save(dossier);
+        verify(vehicleRepository).save(vehicle);
+    }
+
+    /**
+     * Test validate dossier already validated.
+     */
+    @Test
+    void testValidateDossier_AlreadyValidated() {
+        Long dossierId = 1L;
+        Dossier dossier = new Dossier();
+        dossier.setId(dossierId);
+        dossier.setStatus(DossierStatus.VALIDE);
+
+        when(dossierRepository.findById(dossierId)).thenReturn(Optional.of(dossier));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            dossierService.validateDossier(dossierId);
+        });
+    }
+
+    /**
+     * Test reject dossier success.
+     */
+    @Test
+    void testRejectDossier_Success() {
+        Long dossierId = 1L;
+        String reason = "Documents illisibles";
+
+        Dossier dossier = new Dossier();
+        dossier.setId(dossierId);
+        dossier.setReferenceNumber("DOSS-2026-00002");
+        dossier.setStatus(DossierStatus.EN_COURS);
+
+        when(dossierRepository.findById(dossierId)).thenReturn(Optional.of(dossier));
+        when(dossierRepository.save(any(Dossier.class))).thenReturn(dossier);
+
+        Dossier result = dossierService.rejectDossier(dossierId, reason);
+
+        assertNotNull(result);
+        assertEquals(DossierStatus.REJETE, result.getStatus());
+        assertEquals(reason, result.getRejectionReason());
+        verify(dossierRepository).save(dossier);
+    }
+
+    /**
+     * Test reject dossier no reason.
+     */
+    @Test
+    void testRejectDossier_NoReason() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            dossierService.rejectDossier(1L, null);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            dossierService.rejectDossier(1L, "");
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            dossierService.rejectDossier(1L, "   ");
+        });
+    }
+
 }

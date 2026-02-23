@@ -60,4 +60,24 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      * Recherche par statut ET type avec pagination
      */
     Page<Dossier> findByStatusAndType(DossierStatus status, DossierType type, Pageable pageable);
+
+
+    /**
+     * Compte le nombre de dossiers liés à un véhicule
+     * Tous statuts confondus (EN_COURS, VALIDE, REJETE)
+     *
+     * @param vehicleId ID du véhicule
+     * @return Nombre de dossiers associés à ce véhicule
+     */
+    long countByVehicleId(Long vehicleId);
+
+    /**
+     * Compte le nombre de dossiers actifs (non rejetés) liés à un véhicule
+     * Statuts considérés : EN_COURS, VALIDE
+     *
+     * @param vehicleId ID du véhicule
+     * @param statuses Liste des statuts à compter (EN_COURS, VALIDE)
+     * @return Nombre de dossiers actifs associés à ce véhicule
+     */
+    long countByVehicleIdAndStatusIn(Long vehicleId, List<DossierStatus> statuses);
 }

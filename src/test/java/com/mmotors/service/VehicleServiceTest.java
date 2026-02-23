@@ -3,6 +3,7 @@ package com.mmotors.service;
 import com.mmotors.entity.Vehicle;
 import com.mmotors.entity.VehicleStatus;
 import com.mmotors.entity.VehicleType;
+import com.mmotors.repository.DossierRepository;
 import com.mmotors.repository.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,11 +27,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests unitaires pour VehicleService
+ * The type Vehicle service test.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("VehicleService Tests")
@@ -39,12 +41,18 @@ public class VehicleServiceTest {
     @Mock
     private VehicleRepository vehicleRepository;
 
+    @Mock
+    private DossierRepository dossierRepository;
+
     @InjectMocks
     private VehicleService vehicleService;
 
     private Vehicle testVehicle1;
     private Vehicle testVehicle2;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         // Véhicule à vendre
@@ -82,6 +90,9 @@ public class VehicleServiceTest {
 
     // ==================== TESTS searchVehicles ====================
 
+    /**
+     * Search vehicles with filters returns filtered page.
+     */
     @Test
     @DisplayName("searchVehicles - Avec filtres (type, brand, maxPrice)")
     void searchVehicles_WithFilters_ReturnsFilteredPage() {
@@ -117,6 +128,9 @@ public class VehicleServiceTest {
         );
     }
 
+    /**
+     * Search vehicles without filters returns all vehicles.
+     */
     @Test
     @DisplayName("searchVehicles - Sans filtres (tous les véhicules)")
     void searchVehicles_WithoutFilters_ReturnsAllVehicles() {
@@ -146,6 +160,9 @@ public class VehicleServiceTest {
     }
     // ==================== TESTS findById ====================
 
+    /**
+     * Find by id vehicle exists returns vehicle.
+     */
     @Test
     @DisplayName("findById - Véhicule trouvé")
     void findById_VehicleExists_ReturnsVehicle() {
@@ -162,6 +179,9 @@ public class VehicleServiceTest {
         verify(vehicleRepository).findById(1L);
     }
 
+    /**
+     * Find by id vehicle not found throws exception.
+     */
     @Test
     @DisplayName("findById - Véhicule non trouvé")
     void findById_VehicleNotFound_ThrowsException() {
@@ -177,6 +197,9 @@ public class VehicleServiceTest {
 
     // ==================== TESTS count ====================
 
+    /**
+     * Count returns total.
+     */
     @Test
     @DisplayName("count - Retourne le nombre total de véhicules")
     void count_ReturnsTotal() {
@@ -193,6 +216,9 @@ public class VehicleServiceTest {
 
     // ==================== TESTS countByStatus ====================
 
+    /**
+     * Count by status returns count for status.
+     */
     @Test
     @DisplayName("countByStatus - Compte les véhicules disponibles")
     void countByStatus_ReturnsCountForStatus() {
@@ -209,6 +235,9 @@ public class VehicleServiceTest {
 
     // ==================== TESTS save ====================
 
+    /**
+     * Save new vehicle saves successfully.
+     */
     @Test
     @DisplayName("save - Création d'un nouveau véhicule")
     void save_NewVehicle_SavesSuccessfully() {
@@ -230,6 +259,9 @@ public class VehicleServiceTest {
         verify(vehicleRepository).save(newVehicle);
     }
 
+    /**
+     * Save existing vehicle updates successfully.
+     */
     @Test
     @DisplayName("save - Mise à jour d'un véhicule existant")
     void save_ExistingVehicle_UpdatesSuccessfully() {
@@ -249,6 +281,9 @@ public class VehicleServiceTest {
 
     // ==================== TESTS findAll ====================
 
+    /**
+     * Find all returns all vehicles.
+     */
     @Test
     @DisplayName("findAll - Retourne tous les véhicules")
     void findAll_ReturnsAllVehicles() {
@@ -264,5 +299,103 @@ public class VehicleServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result).containsExactly(testVehicle1, testVehicle2);
         verify(vehicleRepository).findAll();
+    }
+
+    // ==================== TESTS updateVehicle ====================
+
+    /**
+     * Test update vehicle success.
+     */
+    @Test
+    void testUpdateVehicle_Success() {
+        Long vehicleId = 1L;
+
+        Vehicle existingVehicle = new Vehicle();
+        existingVehicle.setId(vehicleId);
+        existingVehicle.setBrand("Geupeot");
+        existingVehicle.setModel("803");
+        existingVehicle.setPrice(new BigDecimal("18500"));
+
+        Vehicle updatedVehicle = new Vehicle();
+        updatedVehicle.setBrand("Nerault");
+        updatedVehicle.setModel("Olic");
+        updatedVehicle.setPrice(new BigDecimal("15000"));
+        updatedVehicle.setType(VehicleType.ACHAT);
+        updatedVehicle.setYear(2023);
+        updatedVehicle.setMileage(25000);
+        updatedVehicle.setFuelType("Essence");
+        updatedVehicle.setPower(110);
+        updatedVehicle.setGearbox("Manuelle");
+        updatedVehicle.setDoors(5);
+        updatedVehicle.setColor("Blanc");
+        updatedVehicle.setDescription("Excellent état");
+        updatedVehicle.setStatus(VehicleStatus.DISPONIBLE);
+
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(existingVehicle));
+        when(dossierRepository.countByVehicleIdAndStatusIn(eq(vehicleId), anyList())).thenReturn(0L);
+        when(vehicleRepository.save(any(Vehicle.class))).thenReturn(existingVehicle);
+
+        Vehicle result = vehicleService.updateVehicle(vehicleId, updatedVehicle);
+
+        assertNotNull(result);
+        assertEquals("Nerault", result.getBrand());
+        assertEquals("Olic", result.getModel());
+        verify(vehicleRepository).save(existingVehicle);
+    }
+
+    /**
+     * Test update vehicle blocked by active dossiers.
+     */
+    @Test
+    void testUpdateVehicle_BlockedByActiveDossiers() {
+
+        Long vehicleId = 1L;
+        Vehicle existingVehicle = new Vehicle();
+        existingVehicle.setId(vehicleId);
+
+        Vehicle updatedVehicle = new Vehicle();
+
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(existingVehicle));
+        when(dossierRepository.countByVehicleIdAndStatusIn(eq(vehicleId), anyList())).thenReturn(2L);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            vehicleService.updateVehicle(vehicleId, updatedVehicle);
+        });
+    }
+
+    /**
+     * Test delete vehicle success.
+     */
+    @Test
+    void testDeleteVehicle_Success() {
+        Long vehicleId = 1L;
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(vehicleId);
+        vehicle.setBrand("Geupeot");
+        vehicle.setModel("803");
+
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
+        doNothing().when(vehicleRepository).delete(vehicle);
+
+        vehicleService.deleteVehicle(vehicleId);
+
+        verify(vehicleRepository).delete(vehicle);
+    }
+
+    /**
+     * Test delete vehicle blocked by dossiers.
+     */
+    @Test
+    void testDeleteVehicle_BlockedByDossiers() {
+        Long vehicleId = 1L;
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(vehicleId);
+
+        when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
+        doThrow(new RuntimeException("FK constraint")).when(vehicleRepository).delete(vehicle);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            vehicleService.deleteVehicle(vehicleId);
+        });
     }
 }

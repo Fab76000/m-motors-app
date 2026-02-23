@@ -39,6 +39,9 @@ public class UserServiceTest {
     private User testUser;
     private UserDTO testUserDTO;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         testUser = new User();
@@ -61,7 +64,10 @@ public class UserServiceTest {
         testUserDTO.setRgpdConsent(true);
     }
 
-
+    // ==================== TESTS findByEmail ====================
+    /**
+     * Find by email user exists returns user.
+     */
     @Test
     @DisplayName("findByEmail - Utilisateur trouvé")
     void findByEmail_UserExists_ReturnsUser() {
@@ -79,48 +85,57 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findByEmail("john.doe@example.com");
     }
 
+    /**
+     * Find by email user not found returns null.
+     */
     @Test
     @DisplayName("findByEmail - Utilisateur non trouvé")
     void findByEmail_UserNotFound_ReturnsNull() {
-        // Given
+
         when(userRepository.findByEmail("unknown@example.com"))
                 .thenReturn(Optional.empty());
 
-        // When
+
         User result = userService.findByEmail("unknown@example.com");
 
-        // Then
         assertThat(result).isNull();
         verify(userRepository, times(1)).findByEmail("unknown@example.com");
     }
 
+    // ==================== TESTS createUser ====================
+    /**
+     * Create user valid data saves user.
+     */
     @Test
     @DisplayName("createUser - Création réussie")
     void createUser_ValidData_SavesUser() {
-        // Given
+
         String encodedPassword = "$2a$12$encodedPassword";
 
         when(userRepository.existsByEmail(testUserDTO.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(testUserDTO.getPassword())).thenReturn(encodedPassword);
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        // When
+
         User result = userService.createUser(testUserDTO);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getEmail()).isEqualTo(testUser.getEmail());
         verify(passwordEncoder, times(1)).encode(testUserDTO.getPassword());
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+
+    /**
+     * Create user email already exists throws exception.
+     */
     @Test
     @DisplayName("createUser - Email déjà utilisé")
     void createUser_EmailAlreadyExists_ThrowsException() {
-        // Given
+
         when(userRepository.existsByEmail(testUserDTO.getEmail())).thenReturn(true);
 
-        // When / Then
+
         assertThatThrownBy(() -> userService.createUser(testUserDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("déjà utilisé");
@@ -128,13 +143,15 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Create user password mismatch throws exception.
+     */
     @Test
     @DisplayName("createUser - Mots de passe ne correspondent pas")
     void createUser_PasswordMismatch_ThrowsException() {
-        // Given
+
         testUserDTO.setConfirmPassword("DifferentPassword@123456");
 
-        // When / Then
         assertThatThrownBy(() -> userService.createUser(testUserDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("correspondent pas");
@@ -142,13 +159,15 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Create user no rgpd consent throws exception.
+     */
     @Test
     @DisplayName("createUser - Consentement RGPD manquant")
     void createUser_NoRgpdConsent_ThrowsException() {
-        // Given
+
         testUserDTO.setRgpdConsent(false);
 
-        // When / Then
         assertThatThrownBy(() -> userService.createUser(testUserDTO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("RGPD");
@@ -156,18 +175,21 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    // ==================== TESTS updateUser ====================
 
+    /**
+     * Update user info email taken by another user throws exception.
+     */
     @Test
     @DisplayName("updateUserInfo - Email déjà pris par un autre utilisateur")
     void updateUserInfo_EmailTakenByAnotherUser_ThrowsException() {
-        // Given
+
         Long userId = 1L;
         String newEmail = "taken@example.com";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userRepository.existsByEmail(newEmail)).thenReturn(true);
 
-        // When / Then
         assertThatThrownBy(() -> userService.updateUserInfo(userId, "Smith", "Jane", newEmail))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("déjà utilisé");
@@ -177,10 +199,13 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Update user info valid data updates user.
+     */
     @Test
     @DisplayName("updateUserInfo - Mise à jour réussie")
     void updateUserInfo_ValidData_UpdatesUser() {
-        // Given
+
         Long userId = 1L;
         String newEmail = "newemail@example.com";
 
@@ -188,19 +213,21 @@ public class UserServiceTest {
         when(userRepository.existsByEmail(newEmail)).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        // When
         userService.updateUserInfo(userId, "Smith", "Jane", newEmail); // ✅ Ordre: lastName, firstName, email
 
-        // Then
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).existsByEmail(newEmail);
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+    // ==================== TESTS changePassword ====================
+
+    /**
+     * Test change password success.
+     */
     @Test
     @DisplayName("changePassword - Succès du changement")
     void testChangePasswordSuccess() {
-        // Given
         Long userId = 1L;
         String oldPassword = "OldPassword@123456";
         String newPassword = "NewPassword@123456";
@@ -211,26 +238,26 @@ public class UserServiceTest {
         when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPass");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-        // When
         userService.changePassword(userId, oldPassword, newPassword, newPassword);
 
-        // Then
         verify(passwordEncoder).matches(eq(oldPassword), eq(oldHashedPassword));
         verify(passwordEncoder).encode(newPassword);
         verify(userRepository).save(any(User.class));
     }
 
+    /**
+     * Change password wrong old password throws exception.
+     */
     @Test
     @DisplayName("changePassword - Ancien mot de passe incorrect")
     void changePassword_WrongOldPassword_ThrowsException() {
-        // Given
+
         Long userId = 1L;
         String wrongOldPassword = "WrongPassword@123456";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(wrongOldPassword, testUser.getPassword())).thenReturn(false);
 
-        // When / Then
         assertThatThrownBy(() -> userService.changePassword(
                 userId, wrongOldPassword, "NewPassword@123456", "NewPassword@123456"
         ))
@@ -240,16 +267,18 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    /**
+     * Change password password mismatch throws exception.
+     */
     @Test
     @DisplayName("changePassword - Confirmation ne correspond pas")
     void changePassword_PasswordMismatch_ThrowsException() {
-        // Given
         Long userId = 1L;
         String oldPassword = "OldPassword@123456";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(oldPassword, testUser.getPassword())).thenReturn(true);
-        // When / Then
+
         assertThatThrownBy(() -> userService.changePassword(
                 userId, oldPassword, "NewPassword@123456", "DifferentPassword@123456"
         ))
@@ -259,10 +288,17 @@ public class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+
+    // ==================== TESTS deleteAccount ====================
+
+
+    /**
+     * Delete account valid password deletes user.
+     */
     @Test
     @DisplayName("deleteAccount - Suppression réussie")
     void deleteAccount_ValidPassword_DeletesUser() {
-        // Given
+
         Long userId = 1L;
         String password = "Password@123456";
 
@@ -270,25 +306,24 @@ public class UserServiceTest {
         when(passwordEncoder.matches(password, testUser.getPassword())).thenReturn(true);
         doNothing().when(userRepository).delete(testUser);
 
-        // When
         userService.deleteAccount(userId, password);
 
-        // Then
         verify(passwordEncoder, times(1)).matches(password, testUser.getPassword());
         verify(userRepository, times(1)).delete(testUser);
     }
 
+    /**
+     * Delete account wrong password throws exception.
+     */
     @Test
     @DisplayName("deleteAccount - Mot de passe incorrect")
     void deleteAccount_WrongPassword_ThrowsException() {
-        // Given
         Long userId = 1L;
         String wrongPassword = "WrongPassword@123456";
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(wrongPassword, testUser.getPassword())).thenReturn(false);
 
-        // When / Then
         assertThatThrownBy(() -> userService.deleteAccount(userId, wrongPassword))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("incorrect");
