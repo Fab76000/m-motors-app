@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class DocumentServiceTest {
      */
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(documentService, "uploadDir", "/tmp/mmotors/uploads");
         User testUser = new User();
         testUser.setId(1L);
         testUser.setFirstName("John");

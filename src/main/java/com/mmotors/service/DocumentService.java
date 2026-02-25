@@ -5,6 +5,7 @@ import com.mmotors.entity.DocumentType;
 import com.mmotors.entity.Dossier;
 import com.mmotors.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,9 +27,9 @@ import java.util.UUID;
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
-
     // Répertoire de stockage des documents (hors webroot pour sécurité)
-    private static final String UPLOAD_DIR = "uploads/documents/";
+    @Value("${app.upload.dir}")
+    private String uploadDir;
 
     // Taille maximale d'un fichier : 5 Mo
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -57,7 +58,7 @@ public class DocumentService {
         validateFile(file);
 
         // Créer le répertoire s'il n'existe pas
-        Path uploadPath = Paths.get(UPLOAD_DIR);
+        Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
