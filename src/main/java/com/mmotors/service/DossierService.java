@@ -190,5 +190,17 @@ public class DossierService {
 
         return savedDossier;
     }
+
+    /**
+     * Anonymise les dossiers d'un utilisateur (RGPD - droit à l'oubli)
+     * @param user Utilisateur à anonymiser
+     */
+    @Transactional
+    public void anonymizeDossiers(User user) {
+        List<Dossier> dossiers = dossierRepository.findByUserOrderByCreatedAtDesc(user);
+        dossiers.forEach(dossier -> dossier.setUser(null));
+        dossierRepository.saveAll(dossiers);
+        log.info("[RGPD] Dossiers anonymisés pour userId={} - {} dossier(s)", user.getId(), dossiers.size());
+    }
 }
 
