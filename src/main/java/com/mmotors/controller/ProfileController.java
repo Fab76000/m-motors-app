@@ -6,6 +6,7 @@ import com.mmotors.service.DossierService;
 import com.mmotors.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ProfileController {
 
     private final UserService userService;
@@ -133,7 +135,7 @@ public class ProfileController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentDispositionFormData("attachment", "mes-donnees-mmotors.json");
-
+        log.info("[RGPD] Export données - userId={}", user.getId());
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(jsonData);

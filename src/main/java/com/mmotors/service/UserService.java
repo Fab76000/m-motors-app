@@ -5,6 +5,7 @@ import com.mmotors.entity.Role;
 import com.mmotors.entity.User;
 import com.mmotors.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,12 @@ import java.time.LocalDateTime;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final DossierService dossierService;
     /**
      * Crée un nouvel utilisateur à partir du formulaire d'inscription
      *
@@ -55,7 +57,9 @@ public class UserService {
         user.setRgpdConsent(true);
         user.setRgpdConsentDate(LocalDateTime.now());
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        log.info("[RGPD] Consentement enregistré - userId={} date={}", savedUser.getId(), savedUser.getRgpdConsentDate());
+        return savedUser;
     }
 
     /**
@@ -74,7 +78,7 @@ public class UserService {
      */
 
     @Transactional
-    public User updateUserInfo(Long userId, String lastName, String firstName, String email) {
+    public void updateUserInfo(Long userId, String lastName, String firstName, String email) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur non trouvé"));
         //Vérifier si l'email est déjà utilisé par un autre utilisateur
@@ -87,7 +91,7 @@ public class UserService {
         user.setLastName(lastName);
         user.setEmail(email);
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     /**
@@ -136,9 +140,9 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Mot de passe incorrect");
         }
-
+        log.info("[RGPD] Suppression compte - userId={} email={}", user.getId(), user.getEmail());
         //Supprimer l'utilisateur
+        dossierService.anonymizeDossiers(user);
         userRepository.delete(user);
     }
-
 }

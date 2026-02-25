@@ -33,6 +33,9 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private DossierService dossierService;
+
     @InjectMocks
     private UserService userService;
 
@@ -305,6 +308,7 @@ public class UserServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches(password, testUser.getPassword())).thenReturn(true);
         doNothing().when(userRepository).delete(testUser);
+        doNothing().when(dossierService).anonymizeDossiers(testUser);
 
         userService.deleteAccount(userId, password);
 
