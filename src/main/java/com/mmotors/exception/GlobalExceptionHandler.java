@@ -1,5 +1,7 @@
 package com.mmotors.exception;
 
+import com.mmotors.service.AlertingService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,8 +15,11 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * The type Global exception handler.
  */
 @Slf4j
+@RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final AlertingService alertingService;
 
     /**
      * 404 - Page non trouvée
@@ -56,8 +61,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleGenericException(Exception ex) {
         log.error("500 - Erreur interne : {}", ex.getMessage(), ex);
+        alertingService.sendCriticalAlert("Erreur 500", ex.getMessage(), ex);
         ModelAndView mav = new ModelAndView("error/500");
         mav.addObject("message", "Une erreur est survenue. Veuillez réessayer plus tard.");
         return mav;
     }
+
 }
