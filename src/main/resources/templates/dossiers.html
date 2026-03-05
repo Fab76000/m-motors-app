@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes dossiers - M-Motors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<div th:replace="~{fragments/header :: header-client}"></div>
+
+<main>
+    <div class="container my-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Accueil</a></li>
+                <li class="breadcrumb-item"><a href="/profile">Mon profil</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Mes dossiers</li>
+            </ol>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-5">
+                    <i class="bi bi-folder text-primary"></i> Mes dossiers
+                </h1>
+                <p class="text-muted">
+                    Bonjour <strong th:text="${user.firstName + ' ' + user.lastName}">Utilisateur</strong>,
+                    voici la liste de vos demandes d'achat et de location.
+                </p>
+            </div>
+            <div class="col-auto">
+                <a href="/vehicles" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nouveau dossier
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${dossiers.isEmpty()}" class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="lead text-muted mt-3">Vous n'avez aucun dossier en cours</p>
+            <a href="/vehicles" class="btn btn-primary">
+                <i class="bi bi-search"></i> Rechercher un véhicule
+            </a>
+        </div>
+
+        <div th:if="${!dossiers.isEmpty()}" class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col" th:each="dossier : ${dossiers}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="bi bi-file-earmark-text"></i>
+                            <strong th:text="${dossier.referenceNumber}">DOSS-2026-00001</strong>
+                        </span>
+                        <span class="badge"
+                              th:classappend="${dossier.status.name() == 'EN_COURS'} ? 'bg-warning text-dark' :
+                                             (${dossier.status.name() == 'VALIDE'} ? 'bg-success' : 'bg-danger')">
+                            <span th:text="${dossier.status.name() == 'EN_COURS' ? 'En cours' :
+                                           (dossier.status.name() == 'VALIDE' ? 'Validé' : 'Rejeté')}">Statut</span>
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Peugeot 308</span>
+                        </h5>
+
+                        <!-- Infos véhicule -->
+                        <p class="text-muted mb-2">
+                            <small>
+                                <i class="bi bi-calendar"></i> <span th:text="${dossier.vehicle.year}">2023</span>
+                                &nbsp;•&nbsp;
+                                <i class="bi bi-speedometer2"></i>
+                                <span th:text="${#numbers.formatInteger(dossier.vehicle.mileage, 0, 'WHITESPACE')}">50 000</span> km
+                            </small>
+                        </p>
+
+                        <p class="mb-2">
+                            <span class="badge"
+                                  th:classappend="${dossier.type.name() == 'ACHAT'} ? 'bg-success' : 'bg-info'">
+                                <span th:text="${dossier.type.name() == 'ACHAT'} ? 'Achat' : 'Location'">Type</span>
+                            </span>
+                        </p>
+
+                        <p class="mb-2" th:if="${dossier.vehicle.type.name() == 'ACHAT'}">
+                            <strong class="text-success">
+                                <span th:text="${#numbers.formatDecimal(dossier.vehicle.price, 0, 'WHITESPACE', 0, 'POINT')}">18 500</span> €
+                            </strong>
+                        </p>
+                        <p class="mb-2" th:if="${dossier.vehicle.type.name() == 'LOCATION'}">
+                            <strong class="text-info">
+                                <span th:text="${#numbers.formatDecimal(dossier.vehicle.monthlyRent, 0, 'WHITESPACE', 0, 'POINT')}">450</span> €/mois
+                            </strong>
+                        </p>
+
+                        <p class="text-muted mb-3">
+                            <small>
+                                <i class="bi bi-clock"></i>
+                                Déposé le <span th:text="${#temporals.format(dossier.createdAt, 'dd/MM/yyyy à HH:mm')}">01/01/2026</span>
+                            </small>
+                        </p>
+
+                        <div th:if="${dossier.status.name() == 'REJETE' && dossier.rejectionReason != null}"
+                             class="alert alert-danger mb-3">
+                            <small>
+                                <strong>Raison du rejet :</strong><br>
+                                <span th:text="${dossier.rejectionReason}">Dossier incomplet</span>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white">
+                        <a th:href="@{/vehicles/{id}(id=${dossier.vehicle.id})}"
+                           class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-eye"></i> Voir le véhicule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

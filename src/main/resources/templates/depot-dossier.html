@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déposer un dossier - M-Motors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-ligh d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/header :: header-client}"></div>
+<main>
+    <div class="container my-5">
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="mb-4">
+        <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour au véhicule
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">
+                <i class="bi bi-file-earmark-text text-primary"></i>
+                <span th:text="${vehicle.type.name() == 'ACHAT'} ? 'Dossier d\'achat' : 'Dossier de location'">Déposer un dossier</span>
+            </h1>
+            <p class="lead text-muted">
+                Pour : <strong th:text="${vehicle.brand + ' ' + vehicle.model}">Véhicule</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="bi bi-car-front"></i> Récapitulatif du véhicule
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-2">
+                        <strong>Marque/Modèle :</strong>
+                        <span th:text="${vehicle.brand + ' ' + vehicle.model}">Marque Modèle</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Année :</strong>
+                        <span th:text="${vehicle.year}">2023</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Kilométrage :</strong>
+                        <span th:text="${#numbers.formatInteger(vehicle.mileage, 0, 'WHITESPACE')}">15 000</span> km
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-2">
+                        <strong>Carburant :</strong>
+                        <span th:text="${vehicle.fuelType}">Essence</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Puissance :</strong>
+                        <span th:text="${vehicle.power}">110</span> ch
+                    </p>
+                    <p class="mb-2" th:if="${vehicle.type.name() == 'ACHAT'}">
+                        <strong class="text-primary">Prix :</strong>
+                        <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.price, 0, 'WHITESPACE', 0, 'POINT')}">18 500</span> €
+                    </p>
+                    <p class="mb-2" th:if="${vehicle.type.name() == 'LOCATION'}">
+                        <strong class="text-primary"> :</strong>
+                        <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.monthlyRent, 0, 'WHITESPACE', 0, 'POINT')}">450</span> €/mois
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/vehicles/{id}/depot-dossier(id=${vehicle.id})}" method="post" enctype="multipart/form-data">
+
+        <div th:if="${vehicle.type.name() == 'ACHAT'}">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-cash-coin"></i> Modalités d'achat
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="paymentMode" class="form-label">Mode de paiement <span class="text-danger">*</span></label>
+                        <select class="form-select" id="paymentMode" name="paymentMode" required>
+                            <option value="">Sélectionnez un mode de paiement</option>
+                            <option value="Comptant">Comptant</option>
+                            <option value="Crédit">Crédit</option>
+                        </select>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="tradeIn" name="tradeIn" value="true">
+                        <label class="form-check-label" for="tradeIn">
+                            Je souhaite reprendre mon ancien véhicule
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${vehicle.type.name() == 'LOCATION'}">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-range"></i> Durée de la location
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Durée souhaitée (en mois) <span class="text-danger">*</span></label>
+                        <select class="form-select" id="duration" name="duration" required>
+                            <option value="">Sélectionnez une durée</option>
+                            <option value="12">12 mois</option>
+                            <option value="24">24 mois</option>
+                            <option value="36">36 mois</option>
+                            <option value="48">48 mois</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            La location longue durée inclut l'assurance tous risques, l'assistance dépannage, l'entretien et le contrôle technique.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="bi bi-cloud-upload"></i> Documents justificatifs
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Formats acceptés :</strong> PDF, JPEG, PNG (max 5 Mo par fichier)
+                </p>
+
+                <div class="mb-3">
+                    <label for="pieceId" class="form-label">
+                        <i class="bi bi-person-vcard"></i> Pièce d'identité (recto-verso) <span class="text-danger">*</span>
+                    </label>
+                    <input type="file" class="form-control" id="pieceId" name="pieceId" accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="justifDomicile" class="form-label">
+                        <i class="bi bi-house"></i> Justificatif de domicile (moins de 3 mois) <span class="text-danger">*</span>
+                    </label>
+                    <input type="file" class="form-control" id="justifDomicile" name="justifDomicile" accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="avisImpot" class="form-label">
+                        <i class="bi bi-file-earmark-text"></i> Avis d'imposition
+                    </label>
+                    <input type="file" class="form-control" id="avisImpot" name="avisImpot" accept=".pdf,.jpg,.jpeg,.png">
+                    <small class="form-text text-muted">Optionnel mais recommandé</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="bulletinSalaire" class="form-label">
+                        <i class="bi bi-cash-stack"></i> Bulletin de salaire (3 derniers mois)
+                    </label>
+                    <input type="file" class="form-control" id="bulletinSalaire" name="bulletinSalaire" accept=".pdf,.jpg,.jpeg,.png">
+                    <small class="form-text text-muted">Optionnel mais recommandé</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rib" class="form-label">
+                        <i class="bi bi-bank"></i> Relevé d'identité bancaire (RIB) <span class="text-danger">*</span>
+                    </label>
+                    <input type="file" class="form-control" id="rib" name="rib" accept=".pdf,.jpg,.jpeg,.png" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+            <a th:href="@{/vehicles/{id}(id=${vehicle.id})}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-check-circle"></i> Déposer mon dossier
+            </button>
+        </div>
+    </form>
+</div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

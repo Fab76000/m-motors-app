@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation - M-Motors</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-ligh d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/header :: header-client}"></div>
+<main>
+    <div class="container my-5">
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-success">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h1 class="display-5 text-success mb-3">Dossier déposé avec succès !</h1>
+                    <p class="lead">Votre demande a bien été enregistrée.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-text"></i> Informations de votre dossier
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Numéro de dossier :</strong><br>
+                                <span class="fs-4 text-primary fw-bold" th:text="${dossier.referenceNumber}">DOSS-2026-00001</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Statut :</strong><br>
+                                <span class="badge bg-warning text-dark fs-6">
+                                        <i class="bi bi-clock"></i> En cours de traitement
+                                    </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Type :</strong>
+                                <span th:text="${dossier.type.name() == 'ACHAT'} ? 'Achat' : 'Location'">Type</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Date de dépôt :</strong>
+                                <span th:text="${#temporals.format(dossier.createdAt, 'dd/MM/yyyy à HH:mm')}">01/01/2026</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Véhicule :</strong>
+                                <span th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Marque Modèle</span>
+                            </p>
+                            <p class="mb-2" th:if="${dossier.type.name() == 'ACHAT'}">
+                                <strong>Mode de paiement :</strong>
+                                <span th:text="${dossier.paymentMode}">Comptant</span>
+                            </p>
+                            <p class="mb-2" th:if="${dossier.type.name() == 'LOCATION'}">
+                                <strong>Durée :</strong>
+                                <span th:text="${dossier.duration}">24</span> mois
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check"></i> Prochaines étapes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0">
+                        <li class="mb-2">
+                            <strong>Traitement de votre dossier :</strong> Notre équipe va étudier votre demande et vérifier les documents fournis.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Délai de réponse :</strong> Vous recevrez une réponse sous 48 à 72 heures ouvrées.
+                        </li>
+                        <li class="mb-2">
+                            <strong>Notification :</strong> Vous serez informé par email de l'avancement de votre dossier.
+                        </li>
+                        <li>
+                            <strong>Suivi :</strong> Vous pouvez suivre l'état de votre dossier depuis votre espace personnel.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="alert alert-warning">
+                <h6 class="alert-heading">
+                    <i class="bi bi-exclamation-triangle"></i> Informations importantes
+                </h6>
+                <ul class="mb-0">
+                    <li>Conservez précieusement votre numéro de dossier : <strong th:text="${dossier.referenceNumber}">DOSS-2026-00001</strong></li>
+                    <li>Assurez-vous que votre adresse email est valide pour recevoir les notifications</li>
+                    <li>En cas de besoin, contactez notre service client en mentionnant votre numéro de dossier</li>
+                </ul>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                <a href="/profile" class="btn btn-primary btn-lg">
+                    <i class="bi bi-person"></i> Accéder à mon profil
+                </a>
+                <a href="/vehicles" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-search"></i> Rechercher d'autres véhicules
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
