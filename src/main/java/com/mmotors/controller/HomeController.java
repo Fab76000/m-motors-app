@@ -25,4 +25,9 @@ public class HomeController {
         }
         return "index";
     }
+    
+    @GetMapping("/test-error")
+    public String testError() {
+        throw new RuntimeException("Test erreur 500 prod");
+    }
 }
