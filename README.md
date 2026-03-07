@@ -45,6 +45,7 @@ CREATE DATABASE mmotors_db;
 Configurer `src/main/resources/application-dev.properties` :
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/mmotors_db
+
 spring.datasource.username=your_user
 spring.datasource.password=your_password
 app.upload.dir=/tmp/mmotors/uploads
@@ -55,7 +56,15 @@ Lancer :
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Accéder : http://localhost:8080
+## Accès
+
+**Production** : https://m-motors-app-5858e2463c85.herokuapp.com
+
+**En local** :
+```bash
+mvn spring-boot:run
+```
+Puis ouvrir http://localhost:8080
 
 ## Variables d'environnement (production)
 
