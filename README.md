@@ -45,6 +45,7 @@ CREATE DATABASE mmotors_db;
 Configurer `src/main/resources/application-dev.properties` :
 ```properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/mmotors_db
+
 spring.datasource.username=your_user
 spring.datasource.password=your_password
 app.upload.dir=/tmp/mmotors/uploads
