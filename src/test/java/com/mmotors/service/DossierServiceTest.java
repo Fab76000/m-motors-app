@@ -400,4 +400,41 @@ public class DossierServiceTest {
                 testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
     }
 
+    /**
+     * Test create dossier throws exception when dossier active exists.
+     */
+    @Test
+    @DisplayName("createDossier - Lève exception si dossier actif existe déjà")
+    void createDossier_DossierActifExiste_ThrowsException() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> dossierService.createDossier(
+                testUser, testVehicleAchat, DossierType.ACHAT, "Comptant", false, null))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Vous avez déjà un dossier");
+    }
+
+    /**
+     * Test anonymize dossiers sets user to null.
+     */
+    @Test
+    @DisplayName("anonymizeDossiers - Anonymise les dossiers de l'utilisateur")
+    void anonymizeDossiers_SetsUserToNull() {
+        testDossierAchat.setUser(testUser);
+        testDossierLocation.setUser(testUser);
+
+        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
+        when(dossierRepository.saveAll(anyList()))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
+
+        dossierService.anonymizeDossiers(testUser);
+
+        assertThat(testDossierAchat.getUser()).isNull();
+        assertThat(testDossierLocation.getUser()).isNull();
+        verify(dossierRepository).saveAll(anyList());
+    }
+
 }

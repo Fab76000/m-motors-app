@@ -1,6 +1,6 @@
 # M-Motors
-![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
-![Tests](https://img.shields.io/badge/tests-49-blue)
+![Coverage](https://img.shields.io/badge/coverage-83%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-58-blue)
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.1-green)
 
@@ -107,9 +107,9 @@ open target/site/jacoco/index.html
 Ou ouvrir manuellement le fichier `target/site/jacoco/index.html` dans votre navigateur.
 
 ### Couverture actuelle
-- Couverture globale : **80%**
-- Nombre de tests : **49**
-- Types : tests unitaires (JUnit 5 + Mockito) + 1 test d'intégration (`@SpringBootTest`)
+- Couverture globale : **83%**
+- Nombre de tests : **58**
+- Types : 57 tests unitaires (JUnit 5 + Mockito) + 1 test d'intégration (`@SpringBootTest`)
 - Outil : JaCoCo 0.8.14
 
 ### Rapport de couverture
