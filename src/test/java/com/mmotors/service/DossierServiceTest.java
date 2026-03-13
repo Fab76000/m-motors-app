@@ -253,33 +253,28 @@ public class DossierServiceTest {
     @Test
     @DisplayName("findByUser - Retourne les dossiers de l'utilisateur")
     void findByUser_ReturnsUserDossiers() {
-        List<Dossier> dossiers = Arrays.asList(testDossierAchat, testDossierLocation);
-        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser)).thenReturn(dossiers);
-
+        when(dossierRepository.findByUserWithVehicle(testUser))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
 
         List<Dossier> result = dossierService.findByUser(testUser);
 
-
-        assertThat(result).isNotNull();
         assertThat(result).hasSize(2);
-        assertThat(result).containsExactly(testDossierAchat, testDossierLocation);
-        verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
+        verify(dossierRepository).findByUserWithVehicle(testUser);
     }
 
     /**
      * Find by user no dossiers returns empty list.
      */
     @Test
-    @DisplayName("findByUser - Aucun dossier pour l'utilisateur")
+    @DisplayName("findByUser - Aucun dossier retourne liste vide")
     void findByUser_NoDossiers_ReturnsEmptyList() {
-        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser))
+        when(dossierRepository.findByUserWithVehicle(testUser))
                 .thenReturn(List.of());
 
         List<Dossier> result = dossierService.findByUser(testUser);
 
-        assertThat(result).isNotNull();
         assertThat(result).isEmpty();
-        verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
+        verify(dossierRepository).findByUserWithVehicle(testUser);
     }
 
     // ==================== TESTS validateDossier ====================
