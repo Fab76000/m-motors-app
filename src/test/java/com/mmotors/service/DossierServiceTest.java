@@ -367,4 +367,37 @@ public class DossierServiceTest {
         });
     }
 
+    /**
+     *  Test reject dossier already rejected.
+     */
+    @Test
+    @DisplayName("hasDossierActif - retourne true si dossier actif existe")
+    void hasDossierActif_ReturnsTrueWhenExists() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(true);
+
+        boolean result = dossierService.hasDossierActif(testUser, testVehicleAchat);
+
+        assertThat(result).isTrue();
+        verify(dossierRepository).existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
+    }
+
+    /** Test has dossier actif returns false when not exists. */
+
+    @Test
+    @DisplayName("hasDossierActif - retourne false si aucun dossier actif")
+    void hasDossierActif_ReturnsFalseWhenNotExists() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(false);
+
+        boolean result = dossierService.hasDossierActif(testUser, testVehicleAchat);
+
+        assertThat(result).isFalse();
+        verify(dossierRepository).existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
+    }
+
 }
