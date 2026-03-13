@@ -1,11 +1,17 @@
 package com.mmotors.controller;
 
+import com.mmotors.entity.DossierStatus;
+import com.mmotors.entity.User;
 import com.mmotors.entity.Vehicle;
 import com.mmotors.entity.VehicleType;
+import com.mmotors.service.DossierService;
+import com.mmotors.service.UserService;
 import com.mmotors.service.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Contrôleur pour la recherche et l'affichage des véhicules
@@ -23,6 +30,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class VehicleController {
     private final VehicleService vehicleService;
+    private final DossierService dossierService;
+    private final UserService userService;
 
     /**
      * Page de recherche de véhicules
@@ -72,15 +81,26 @@ public class VehicleController {
  */
 
     @GetMapping("/vehicles/{id}")
-    public String vehicleDetails(@PathVariable Long id, Model model) {
-        try {
-            Vehicle vehicle = vehicleService.findById(id);
-            model.addAttribute("vehicle", vehicle);
-            return "details";
-        } catch (IllegalArgumentException e) {
-            return "redirect:/vehicles?error=notfound";
+    public String vehicleDetails(
+        @PathVariable Long id,
+        @AuthenticationPrincipal UserDetails userDetails,
+        Model model) {
+    try {
+        Vehicle vehicle = vehicleService.findById(id);
+        model.addAttribute("vehicle", vehicle);
+
+        if (userDetails != null) {
+            User user = userService.findByEmail(userDetails.getUsername());
+            model.addAttribute("dossierActif", dossierService.hasDossierActif(user, vehicle));
+        } else {
+            model.addAttribute("dossierActif", false);
         }
+
+        return "details";
+    } catch (IllegalArgumentException e) {
+        return "redirect:/vehicles?error=notfound";
     }
+}
     /**
      * Switch un véhicule entre ACHAT et LOCATION
      */

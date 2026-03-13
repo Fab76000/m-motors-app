@@ -74,13 +74,14 @@
                         <strong>Puissance :</strong>
                         <span th:text="${vehicle.power}">110</span> ch
                     </p>
-                    <p class="mb-2" th:if="${vehicle.type.name() == 'ACHAT'}">
-                        <strong class="text-primary">Prix :</strong>
-                        <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.price, 0, 'WHITESPACE', 0, 'POINT')}">18 500</span> €
-                    </p>
-                    <p class="mb-2" th:if="${vehicle.type.name() == 'LOCATION'}">
-                        <strong class="text-primary"> :</strong>
-                        <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.monthlyRent, 0, 'WHITESPACE', 0, 'POINT')}">450</span> €/mois
+                    <p class="mb-2" th:switch="${vehicle.type.name()}">
+                    <span th:case="'ACHAT'">
+                    <strong>Prix : </strong>
+                        <span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.price, 0, 'WHITESPACE', 0, 'POINT')}"> 18 500</span> €
+                        </span>
+                        <span th:case="'LOCATION'">
+                    <strong>Prix : </strong><span class="text-primary fw-bold" th:text="${#numbers.formatDecimal(vehicle.monthlyRent, 0, 'WHITESPACE', 0, 'POINT')}">450</span> €/mois
+                        </span>
                     </p>
                 </div>
             </div>

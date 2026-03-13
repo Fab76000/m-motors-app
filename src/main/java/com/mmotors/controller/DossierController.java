@@ -33,11 +33,11 @@ public class DossierController {
 
     /**
      * Affiche le formulaire de dépôt de dossier
+     *
      * @param vehicleId ID du véhicule
      * @param model Modèle Spring MVC
      * @return Vue depot-dossier.html
      */
-
     @GetMapping("/vehicles/{vehicleId}/depot-dossier")
     public String showDepotForm(@PathVariable Long vehicleId, Model model) {
         try {
@@ -55,20 +55,20 @@ public class DossierController {
 
     /**
      * Traite la soumission du formulaire de dépôt
-     * @param vehicleId ID du véhicule
-     * @param userDetails Utilisateur connecté
-     * @param paymentMode Mode de paiement (si ACHAT)
-     * @param tradeIn Reprise (si ACHAT)
-     * @param duration Durée (si LOCATION)
-     * @param pieceId Document pièce d'identité
-     * @param justifDomicile Document justificatif domicile
-     * @param avisImpot Document avis d'impôt (optionnel)
-     * @param bulletinSalaire Document bulletin de salaire (optionnel)
-     * @param rib Document RIB
+     *
+     * @param vehicleId          ID du véhicule
+     * @param userDetails        Utilisateur connecté
+     * @param paymentMode        Mode de paiement (si ACHAT)
+     * @param tradeIn            Reprise (si ACHAT)
+     * @param duration           Durée (si LOCATION)
+     * @param pieceId            Document pièce d'identité
+     * @param justifDomicile     Document justificatif domicile
+     * @param avisImpot          Document avis d'impôt (optionnel)
+     * @param bulletinSalaire    Document bulletin de salaire (optionnel)
+     * @param rib                Document RIB
      * @param redirectAttributes Attributs de redirection
      * @return Redirection vers page confirmation
      */
-
     @PostMapping("/vehicles/{vehicleId}/depot-dossier")
     public String submitDossier(
             @PathVariable Long vehicleId,
@@ -116,7 +116,7 @@ public class DossierController {
                     "Votre dossier a été déposé avec succès !");
             return "redirect:/dossiers/" + dossier.getId() + "/confirmation";
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/vehicles/" + vehicleId + "/depot-dossier";
         } catch (IOException e) {
@@ -128,7 +128,8 @@ public class DossierController {
 
     /**
      * Page de confirmation après dépôt du dossier
-     * @param dossierId ID du dossier
+     *
+     * @param dossierId   ID du dossier
      * @param userDetails Utilisateur connecté
      * @param model Modèle Spring MVC
      * @return Vue confirmation.html
@@ -141,7 +142,7 @@ public class DossierController {
         try {
             User currentUser = userService.findByEmail(userDetails.getUsername());
 
-            Dossier dossier = dossierService.findById(dossierId);
+            Dossier dossier = dossierService.findByIdWithDetails(dossierId);
 
             if (!dossier.getUser().getId().equals(currentUser.getId())) {
                 // Tentative d'accès non autorisé → 403 Forbidden
@@ -155,8 +156,10 @@ public class DossierController {
             return "redirect:/profile?error=notfound";
         }
     }
+
     /**
      * Affiche la liste des dossiers de l'utilisateur connecté
+     *
      * @param userDetails Utilisateur connecté
      * @param model Modèle Spring MVC
      * @return Vue dossiers.html
