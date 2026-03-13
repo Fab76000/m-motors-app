@@ -179,34 +179,36 @@ public class DossierServiceTest {
     // ==================== TESTS findById ====================
 
     /**
-     * Find by id dossier exists returns dossier.
+     * Teste que findByIdWithDetails retourne le dossier correct quand il existe
+     * @see DossierService#findByIdWithDetails(Long)
      */
     @Test
     @DisplayName("findById - Dossier trouvé")
     void findById_DossierExists_ReturnsDossier() {
-        when(dossierRepository.findById(1L)).thenReturn(Optional.of(testDossierAchat));
+        when(dossierRepository.findByIdWithVehicleAndUser(1L)).thenReturn(Optional.of(testDossierAchat));
 
-        Dossier result = dossierService.findById(1L);
+        Dossier result = dossierService.findByIdWithDetails(1L);
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getReferenceNumber()).isEqualTo("DOSS-2026-00001");
-        verify(dossierRepository).findById(1L);
+        verify(dossierRepository).findByIdWithVehicleAndUser(1L);
     }
 
     /**
-     * Find by id dossier not found throws exception.
+     * Teste que findByIdWithDetails lève une IllegalArgumentException quand le dossier n'existe pas
+     * @see DossierService#findByIdWithDetails(Long)
      */
     @Test
     @DisplayName("findById - Dossier non trouvé")
     void findById_DossierNotFound_ThrowsException() {
-        when(dossierRepository.findById(999L)).thenReturn(Optional.empty());
+        when(dossierRepository.findByIdWithVehicleAndUser(999L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> dossierService.findById(999L))
+        assertThatThrownBy(() -> dossierService.findByIdWithDetails(999L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Dossier non trouvé");
 
-        verify(dossierRepository).findById(999L);
+        verify(dossierRepository).findByIdWithVehicleAndUser(999L);
     }
 
     // ==================== TESTS findByReferenceNumber ====================

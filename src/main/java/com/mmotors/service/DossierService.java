@@ -72,14 +72,14 @@ public class DossierService {
     }
 
     /**
-     * Trouve un dossier par son ID
+     * Trouve un dossier par son ID en chargeant le véhicule et l'utilisateur associés
+     * (évite le LazyInitializationException en dehors de la session JPA)
      * @param id Identifiant du dossier
-     * @return Dossier trouvé
+     * @return Dossier avec vehicle et user chargés, ou empty si non trouvé
      */
-
     @Transactional(readOnly = true)
-    public Dossier findById(Long id) {
-        return dossierRepository.findById(id)
+    public Dossier findByIdWithDetails(Long id) {
+        return dossierRepository.findByIdWithVehicleAndUser(id)
                 .orElseThrow(() -> new IllegalArgumentException("Dossier non trouvé"));
     }
 
@@ -102,7 +102,7 @@ public class DossierService {
      */
     @Transactional(readOnly = true)
     public List<Dossier> findByUser(User user) {
-        return dossierRepository.findByUserOrderByCreatedAtDesc(user);
+        return dossierRepository.findByUserWithVehicle(user);
     }
 
     /**
