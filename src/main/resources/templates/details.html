@@ -14,11 +14,18 @@
 <div th:replace="~{fragments/header :: header-client}"></div>
     <main>
         <div class="container my-5">
-        <div class="mb-4">
-            <a href="/vehicles" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Retour à la recherche
-            </a>
-        </div>
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item" sec:authorize="isAuthenticated()">
+                        <a th:href="@{/profile}">Mon profil</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/vehicles}">Recherche de véhicules</a>
+                    </li>
+                    <li class="breadcrumb-item active"
+                        th:text="${vehicle.brand + ' ' + vehicle.model}">Véhicule</li>
+                </ol>
+            </nav>
 
         <div class="row">
             <div class="col-lg-6 mb-4">
@@ -70,11 +77,22 @@
                         </div>
 
                         <div class="d-grid gap-2 mb-3">
-                            <a th:href="@{/vehicles/{id}/depot-dossier(id=${vehicle.id})}" class="btn btn-primary btn-lg" th:if="${vehicle.status.name() == 'DISPONIBLE'}">
+                            <a th:if="${vehicle.status.name() == 'DISPONIBLE' and dossierActif != true}"
+                               th:href="@{/vehicles/{id}/depot-dossier(id=${vehicle.id})}"
+                               class="btn btn-primary btn-lg">
                                 <i class="bi bi-file-earmark-text"></i>
-                                <span th:text="${vehicle.type.name() == 'ACHAT'} ? 'Déposer un dossier d\'achat' : 'Déposer un dossier de location'">Déposer un dossier</span>
+                                <span th:text="${vehicle.type.name() == 'ACHAT'} ? 'Déposer un dossier d\'achat' : 'Déposer un dossier de location'">
+            Déposer un dossier
+        </span>
                             </a>
-                            <button class="btn btn-secondary btn-lg" disabled th:if="${vehicle.status.name() != 'DISPONIBLE'}">
+                            <div th:if="${vehicle.status.name() == 'DISPONIBLE' and dossierActif == true}"
+                                 class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i>
+                                Vous avez déjà un dossier en cours ou validé pour ce véhicule.
+                                <a th:href="@{/dossiers}" class="alert-link">Voir mes dossiers</a>
+                            </div>
+                            <button class="btn btn-secondary btn-lg" disabled
+                                    th:if="${vehicle.status.name() != 'DISPONIBLE'}">
                                 <i class="bi bi-x-circle"></i> Véhicule non disponible
                             </button>
                         </div>

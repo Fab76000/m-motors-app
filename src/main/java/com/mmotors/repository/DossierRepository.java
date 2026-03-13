@@ -1,9 +1,6 @@
 package com.mmotors.repository;
 
-import com.mmotors.entity.Dossier;
-import com.mmotors.entity.DossierStatus;
-import com.mmotors.entity.DossierType;
-import com.mmotors.entity.User;
+import com.mmotors.entity.*;
 import jakarta.persistence.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -78,4 +75,13 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      */
     @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle WHERE d.user = :user ORDER BY d.createdAt DESC")
     List<Dossier> findByUserWithVehicle(@Param("user") User user);
+
+    /**
+     * Vérifie l'existence d'un dossier actif pour un utilisateur et un véhicule donnés
+     * @param user Utilisateur
+     * @param vehicle Véhicule
+     * @param statuses Liste des statuts à vérifier (EN_COURS, VALIDE)
+     * @return true si un dossier actif existe
+     */
+    boolean existsByUserAndVehicleAndStatusIn(User user, Vehicle vehicle, List<DossierStatus> statuses);
 }

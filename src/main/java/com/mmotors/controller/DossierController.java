@@ -116,7 +116,7 @@ public class DossierController {
                     "Votre dossier a été déposé avec succès !");
             return "redirect:/dossiers/" + dossier.getId() + "/confirmation";
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalStateException | IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/vehicles/" + vehicleId + "/depot-dossier";
         } catch (IOException e) {
