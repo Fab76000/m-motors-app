@@ -13,6 +13,14 @@
 <div th:replace="~{fragments/header :: header-client}"></div>
 <main>
     <div class="container my-5">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" sec:authorize="isAuthenticated()">
+                    <a th:href="@{/profile}">Mon profil</a>
+                </li>
+                <li class="breadcrumb-item active">Recherche de véhicules</li>
+            </ol>
+        </nav>
         <div class="row mb-4">
             <div class="col">
                 <h1 class="display-5">

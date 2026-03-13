@@ -41,6 +41,18 @@ public class DossierService {
         if (vehicle.getStatus() != VehicleStatus.DISPONIBLE) {
             throw new IllegalStateException("Ce véhicule n'est plus disponible");
         }
+
+        // Vérifier qu'il n'existe pas déjà un dossier actif pour ce véhicule et cet utilisateur
+        boolean dossierActifExiste = dossierRepository
+                .existsByUserAndVehicleAndStatusIn(user, vehicle,
+                        List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
+
+        if (dossierActifExiste) {
+            throw new IllegalStateException(
+                    "Vous avez déjà un dossier en cours ou validé pour ce véhicule"
+            );
+        }
+
         Dossier dossier = new Dossier();
         dossier.setUser(user);
         dossier.setVehicle(vehicle);
@@ -201,6 +213,18 @@ public class DossierService {
         dossiers.forEach(dossier -> dossier.setUser(null));
         dossierRepository.saveAll(dossiers);
         log.info("[RGPD] Dossiers anonymisés pour userId={} - {} dossier(s)", user.getId(), dossiers.size());
+    }
+
+    /**
+     * Vérifie si un utilisateur a déjà un dossier actif pour un véhicule donné
+     * @param user Utilisateur
+     * @param vehicle Véhicule
+     * @return true si un dossier EN_COURS ou VALIDE existe
+     */
+    @Transactional(readOnly = true)
+    public boolean hasDossierActif(User user, Vehicle vehicle) {
+        return dossierRepository.existsByUserAndVehicleAndStatusIn(
+                user, vehicle, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
     }
 }
 
