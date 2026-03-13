@@ -253,33 +253,28 @@ public class DossierServiceTest {
     @Test
     @DisplayName("findByUser - Retourne les dossiers de l'utilisateur")
     void findByUser_ReturnsUserDossiers() {
-        List<Dossier> dossiers = Arrays.asList(testDossierAchat, testDossierLocation);
-        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser)).thenReturn(dossiers);
-
+        when(dossierRepository.findByUserWithVehicle(testUser))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
 
         List<Dossier> result = dossierService.findByUser(testUser);
 
-
-        assertThat(result).isNotNull();
         assertThat(result).hasSize(2);
-        assertThat(result).containsExactly(testDossierAchat, testDossierLocation);
-        verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
+        verify(dossierRepository).findByUserWithVehicle(testUser);
     }
 
     /**
      * Find by user no dossiers returns empty list.
      */
     @Test
-    @DisplayName("findByUser - Aucun dossier pour l'utilisateur")
+    @DisplayName("findByUser - Aucun dossier retourne liste vide")
     void findByUser_NoDossiers_ReturnsEmptyList() {
-        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser))
+        when(dossierRepository.findByUserWithVehicle(testUser))
                 .thenReturn(List.of());
 
         List<Dossier> result = dossierService.findByUser(testUser);
 
-        assertThat(result).isNotNull();
         assertThat(result).isEmpty();
-        verify(dossierRepository).findByUserOrderByCreatedAtDesc(testUser);
+        verify(dossierRepository).findByUserWithVehicle(testUser);
     }
 
     // ==================== TESTS validateDossier ====================
@@ -370,6 +365,76 @@ public class DossierServiceTest {
         assertThrows(IllegalArgumentException.class, () -> {
             dossierService.rejectDossier(1L, "   ");
         });
+    }
+
+    /**
+     *  Test reject dossier already rejected.
+     */
+    @Test
+    @DisplayName("hasDossierActif - retourne true si dossier actif existe")
+    void hasDossierActif_ReturnsTrueWhenExists() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(true);
+
+        boolean result = dossierService.hasDossierActif(testUser, testVehicleAchat);
+
+        assertThat(result).isTrue();
+        verify(dossierRepository).existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
+    }
+
+    /** Test has dossier actif returns false when not exists. */
+
+    @Test
+    @DisplayName("hasDossierActif - retourne false si aucun dossier actif")
+    void hasDossierActif_ReturnsFalseWhenNotExists() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(false);
+
+        boolean result = dossierService.hasDossierActif(testUser, testVehicleAchat);
+
+        assertThat(result).isFalse();
+        verify(dossierRepository).existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
+    }
+
+    /**
+     * Test create dossier throws exception when dossier active exists.
+     */
+    @Test
+    @DisplayName("createDossier - Lève exception si dossier actif existe déjà")
+    void createDossier_DossierActifExiste_ThrowsException() {
+        when(dossierRepository.existsByUserAndVehicleAndStatusIn(
+                testUser, testVehicleAchat, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE)))
+                .thenReturn(true);
+
+        assertThatThrownBy(() -> dossierService.createDossier(
+                testUser, testVehicleAchat, DossierType.ACHAT, "Comptant", false, null))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Vous avez déjà un dossier");
+    }
+
+    /**
+     * Test anonymize dossiers sets user to null.
+     */
+    @Test
+    @DisplayName("anonymizeDossiers - Anonymise les dossiers de l'utilisateur")
+    void anonymizeDossiers_SetsUserToNull() {
+        testDossierAchat.setUser(testUser);
+        testDossierLocation.setUser(testUser);
+
+        when(dossierRepository.findByUserOrderByCreatedAtDesc(testUser))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
+        when(dossierRepository.saveAll(anyList()))
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
+
+        dossierService.anonymizeDossiers(testUser);
+
+        assertThat(testDossierAchat.getUser()).isNull();
+        assertThat(testDossierLocation.getUser()).isNull();
+        verify(dossierRepository).saveAll(anyList());
     }
 
 }
