@@ -4,9 +4,12 @@ import com.mmotors.entity.Dossier;
 import com.mmotors.entity.DossierStatus;
 import com.mmotors.entity.DossierType;
 import com.mmotors.entity.User;
+import jakarta.persistence.Id;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,20 +36,6 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
     Optional<Dossier> findByReferenceNumber(String referenceNumber);
 
     /**
-     * Trouve les dossiers par statut
-     * @param status Statut des dossiers recherchés
-     * @return Liste des dossiers ayant ce statut
-     */
-    List<Dossier> findByStatus(DossierStatus status);
-
-    /**
-     * Compte le nombre de dossiers d'un utilisateur
-     * @param user Utilisateur dont on compte les dossiers
-     * @return Nombre de dossiers
-     */
-    long countByUser(User user);
-
-    /**
      * Recherche par statut avec pagination
      */
     Page<Dossier> findByStatus(DossierStatus status, Pageable pageable);
@@ -61,16 +50,6 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      */
     Page<Dossier> findByStatusAndType(DossierStatus status, DossierType type, Pageable pageable);
 
-
-    /**
-     * Compte le nombre de dossiers liés à un véhicule
-     * Tous statuts confondus (EN_COURS, VALIDE, REJETE)
-     *
-     * @param vehicleId ID du véhicule
-     * @return Nombre de dossiers associés à ce véhicule
-     */
-    long countByVehicleId(Long vehicleId);
-
     /**
      * Compte le nombre de dossiers actifs (non rejetés) liés à un véhicule
      * Statuts considérés : EN_COURS, VALIDE
@@ -80,4 +59,23 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      * @return Nombre de dossiers actifs associés à ce véhicule
      */
     long countByVehicleIdAndStatusIn(Long vehicleId, List<DossierStatus> statuses);
+
+    /**
+     * Recherche un dossier par son ID avec ses relations (véhicule et utilisateur)
+     *
+     * @param id ID du dossier
+     * @return Dossier avec ses relations (véhicule et utilisateur)
+     */
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle JOIN FETCH d.user WHERE d.id = :id ")
+    Optional<Dossier> findByIdWithVehicleAndUser(Long id);
+
+    /**
+     * Trouve tous les dossiers d'un utilisateur avec le véhicule chargé,
+     * triés par date de création décroissante
+     * (évite le LazyInitializationException sur vehicle en dehors de la session JPA)
+     * @param user Utilisateur propriétaire des dossiers
+     * @return Liste des dossiers avec vehicle chargé
+     */
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle WHERE d.user = :user ORDER BY d.createdAt DESC")
+    List<Dossier> findByUserWithVehicle(@Param("user") User user);
 }
