@@ -1,4 +1,8 @@
 # M-Motors
+![Coverage](https://img.shields.io/badge/coverage-80%25-brightgreen)
+![Tests](https://img.shields.io/badge/tests-49-blue)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.1-green)
 
 Application web de gestion de vente et location de véhicules d'occasion.
 
@@ -80,9 +84,36 @@ Puis ouvrir http://localhost:8080
 | `APP_UPLOAD_DIR` | `/tmp/mmotors/uploads` |
 
 ## Tests
+### Prérequis
+Cloner le projet en local :
+```bash
+git clone https://github.com/Fab76000/m-motors-app.git
+cd m-motors-app
+```
+
+### Lancer les tests et générer le rapport de couverture
 ```bash
 mvn clean verify
 ```
+
+### Consulter le rapport Jacoco
+Après le build, ouvrir dans un navigateur :
+```bash
+# Linux/Mac
+xdg-open target/site/jacoco/index.html
+# ou
+open target/site/jacoco/index.html
+```
+Ou ouvrir manuellement le fichier `target/site/jacoco/index.html` dans votre navigateur.
+
+### Couverture actuelle
+- Couverture globale : **80%**
+- Nombre de tests : **49**
+- Types : tests unitaires (JUnit 5 + Mockito) + 1 test d'intégration (`@SpringBootTest`)
+- Outil : JaCoCo 0.8.14
+
+### Rapport de couverture
+![Rapport Jacoco](docs/jaCoCo-report.png)
 
 ## Déploiement
 ```bash
