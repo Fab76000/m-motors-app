@@ -36,8 +36,7 @@ public class AdminDossierController {
             Model model
     ) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
-        Page<Dossier> dossiersPage = dossierService.searchDossiers(status, type, pageable);
-
+        Page<Dossier> dossiersPage = dossierService.searchDossiersWithDetails(status, type, pageable);
         model.addAttribute("dossiers", dossiersPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", dossiersPage.getTotalPages());
