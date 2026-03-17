@@ -226,5 +226,34 @@ public class DossierService {
         return dossierRepository.existsByUserAndVehicleAndStatusIn(
                 user, vehicle, List.of(DossierStatus.EN_COURS, DossierStatus.VALIDE));
     }
+
+    /**
+     * Recherche des dossiers avec filtres, vehicle et user chargés, avec pagination manuelle
+     * (JOIN FETCH incompatible avec pagination JPA native)
+     * @param status Statut (null = tous)
+     * @param type Type (null = tous)
+     * @param pageable Pagination
+     * @return Page de dossiers avec relations chargées
+     */
+    @Transactional(readOnly = true)
+    public Page<Dossier> searchDossiersWithDetails(DossierStatus status, DossierType type, Pageable pageable) {
+        List<Dossier> all;
+        if (status == null && type == null) {
+            all = dossierRepository.findAllWithVehicleAndUser();
+        } else if (status != null && type != null) {
+            all = dossierRepository.findByStatusAndTypeWithDetails(status, type);
+        } else if (status != null) {
+            all = dossierRepository.findByStatusWithDetails(status);
+        } else {
+            all = dossierRepository.findByTypeWithDetails(type);
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), all.size());
+        List<Dossier> pageContent = start >= all.size() ? List.of() : all.subList(start, end);
+
+        return org.springframework.data.support.PageableExecutionUtils.getPage(
+                pageContent, pageable, all::size);
+    }
 }
 

@@ -84,4 +84,19 @@ public interface DossierRepository extends JpaRepository<Dossier, Long> {
      * @return true si un dossier actif existe
      */
     boolean existsByUserAndVehicleAndStatusIn(User user, Vehicle vehicle, List<DossierStatus> statuses);
+
+    /**
+     * Trouve tous les dossiers avec vehicle et user chargés, avec pagination
+     */
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle JOIN FETCH d.user ORDER BY d.createdAt DESC")
+    List<Dossier> findAllWithVehicleAndUser();
+
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle JOIN FETCH d.user WHERE d.status = :status ORDER BY d.createdAt DESC")
+    List<Dossier> findByStatusWithDetails(@Param("status") DossierStatus status);
+
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle JOIN FETCH d.user WHERE d.type = :type ORDER BY d.createdAt DESC")
+    List<Dossier> findByTypeWithDetails(@Param("type") DossierType type);
+
+    @Query("SELECT d FROM Dossier d JOIN FETCH d.vehicle JOIN FETCH d.user WHERE d.status = :status AND d.type = :type ORDER BY d.createdAt DESC")
+    List<Dossier> findByStatusAndTypeWithDetails(@Param("status") DossierStatus status, @Param("type") DossierType type);
 }
