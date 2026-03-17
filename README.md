@@ -108,8 +108,8 @@ Ou ouvrir manuellement le fichier `target/site/jacoco/index.html` dans votre nav
 
 ### Couverture actuelle
 - Couverture globale : **83%**
-- Nombre de tests : **58**
-- Types : 57 tests unitaires (JUnit 5 + Mockito) + 1 test d'intégration (`@SpringBootTest`)
+- Nombre de tests : **62**
+- Types : 61 tests unitaires (JUnit 5 + Mockito) + 1 test d'intégration (`@SpringBootTest`)
 - Outil : JaCoCo 0.8.14
 
 ### Rapport de couverture
