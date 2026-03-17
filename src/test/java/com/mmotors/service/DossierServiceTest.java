@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -437,4 +440,67 @@ public class DossierServiceTest {
         verify(dossierRepository).saveAll(anyList());
     }
 
+    /**
+     * Test search dossiers with details.
+     */
+    @Test
+    @DisplayName("searchDossiersWithDetails - Sans filtre retourne tous les dossiers")
+    void searchDossiersWithDetails_NoFilter_ReturnsAll() {
+        when(dossierRepository.findAllWithVehicleAndUser())
+                .thenReturn(List.of(testDossierAchat, testDossierLocation));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Dossier> result = dossierService.searchDossiersWithDetails(null, null, pageable);
+
+        assertThat(result.getContent()).hasSize(2);
+        verify(dossierRepository).findAllWithVehicleAndUser();
+    }
+
+    /**
+     * Test search dossiers with details by status.
+     */
+    @Test
+    @DisplayName("searchDossiersWithDetails - Filtre par statut")
+    void searchDossiersWithDetails_FilterByStatus_ReturnsDossiers() {
+        when(dossierRepository.findByStatusWithDetails(DossierStatus.EN_COURS))
+                .thenReturn(List.of(testDossierAchat));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Dossier> result = dossierService.searchDossiersWithDetails(DossierStatus.EN_COURS, null, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        verify(dossierRepository).findByStatusWithDetails(DossierStatus.EN_COURS);
+    }
+
+    /**
+     * Test search dossiers with details by type.
+     */
+    @Test
+    @DisplayName("searchDossiersWithDetails - Filtre par type")
+    void searchDossiersWithDetails_FilterByType_ReturnsDossiers() {
+        when(dossierRepository.findByTypeWithDetails(DossierType.ACHAT))
+                .thenReturn(List.of(testDossierAchat));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Dossier> result = dossierService.searchDossiersWithDetails(null, DossierType.ACHAT, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        verify(dossierRepository).findByTypeWithDetails(DossierType.ACHAT);
+    }
+
+    /**
+     * Test search dossiers with details by status and type.
+     */
+    @Test
+    @DisplayName("searchDossiersWithDetails - Filtre par statut ET type")
+    void searchDossiersWithDetails_FilterByStatusAndType_ReturnsDossiers() {
+        when(dossierRepository.findByStatusAndTypeWithDetails(DossierStatus.EN_COURS, DossierType.ACHAT))
+                .thenReturn(List.of(testDossierAchat));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Dossier> result = dossierService.searchDossiersWithDetails(DossierStatus.EN_COURS, DossierType.ACHAT, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        verify(dossierRepository).findByStatusAndTypeWithDetails(DossierStatus.EN_COURS, DossierType.ACHAT);
+    }
 }
