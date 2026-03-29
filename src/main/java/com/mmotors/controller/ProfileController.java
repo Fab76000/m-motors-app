@@ -1,6 +1,7 @@
 package com.mmotors.controller;
 
 import com.mmotors.entity.Dossier;
+import com.mmotors.entity.Role;
 import com.mmotors.entity.User;
 import com.mmotors.service.DossierService;
 import com.mmotors.service.UserService;
@@ -39,7 +40,6 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User user = userService.findByEmail(userDetails.getUsername());
-
         List<Dossier> dossiers = dossierService.findByUser(user);
 
         model.addAttribute("user", user);
