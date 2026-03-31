@@ -38,3 +38,94 @@ html {
 a {
     transition: color 0.2s ease;
 }
+
+/* ==================== Accessible color overrides ==================== */
+/* Objectif : améliorer le contraste des bleus utilisés pour les liens et boutons
+   sans toucher au thème Bootstrap par défaut. */
+:root {
+    /* couleurs choisies pour garantir un contraste élevé sur fond blanc */
+    --mm-primary: #004494; /* bleu principal accessible */
+    --mm-primary-hover: #003370; /* état hover + focus */
+    --mm-info: #0a6f9a; /* bleu/teal pour .text-info */
+    /* couleurs pour les fonds 'info' (badges, en-têtes) */
+    --mm-info-bg: #0b5b7a; /* version plus foncée de bg-info pour contraste */
+    --mm-info-bg-hover: #074b60;
+}
+
+/* Liens et utilitaire text-primary - appliquer uniquement quand la classe est utilisée */
+.text-primary, a.text-primary {
+    color: var(--mm-primary) !important;
+}
+
+/* États hover/focus pour les liens marqués text-primary */
+a.text-primary:hover, a.text-primary:focus {
+    color: var(--mm-primary-hover) !important;
+}
+
+.btn-primary {
+    background-color: var(--mm-primary) !important;
+    border-color: var(--mm-primary) !important;
+    color: #ffffff !important;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--mm-primary-hover) !important;
+    border-color: var(--mm-primary-hover) !important;
+}
+
+/* Teinte pour .text-info lorsque utilisée sur fond clair */
+.text-info {
+    color: var(--mm-info) !important;
+}
+
+/* Badges et fonds 'info' : améliorer le contraste */
+.badge.bg-info,
+.bg-info.badge {
+    background-color: var(--mm-info-bg) !important;
+    color: #ffffff !important;
+}
+
+/* Si `.bg-info` est utilisé comme fond (cartes, headers), s'assurer que le texte est blanc */
+.bg-info {
+    background-color: var(--mm-info-bg) !important;
+    color: #ffffff !important;
+}
+
+.bg-info:hover,
+.badge.bg-info:hover {
+    background-color: var(--mm-info-bg-hover) !important;
+}
+
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-white a:not(.btn),
+.bg-dark a:not(.btn),
+.navbar-dark a:not(.btn) {
+    color: #ffffff !important;
+}
+
+/* Conserver explicitement la couleur blanche pour les éléments de navigation */
+.navbar-dark .nav-link {
+    color: #ffffff !important;
+}
+
+/* ==================== Header (bg-primary) override ==================== */
+/* .bg-primary (utilisé pour le header client) utilise
+   la couleur principale accessible définie dans :root et que les liens
+   de navigation restent lisibles (blancs) sur ce fond. */
+.bg-primary {
+    background-color: var(--mm-primary) !important;
+    color: #ffffff !important;
+}
+.bg-primary .navbar-brand,
+.bg-primary .nav-link,
+.navbar-dark .navbar-brand {
+    color: #ffffff !important;
+}
+.bg-primary .nav-link:hover,
+.bg-primary .nav-link:focus {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+
