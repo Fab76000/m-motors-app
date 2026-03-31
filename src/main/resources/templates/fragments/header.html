@@ -12,10 +12,13 @@
 <header th:fragment="header-client">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-car-front-fill"></i> M-Motors
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarClient">
+            <div class="h5 mb-0">
+                <a class="navbar-brand fw-bold d-inline-block" href="/" aria-label="Accueil M-Motors">
+                    <i class="bi bi-car-front-fill" aria-hidden="true"></i> M-Motors
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarClient"
+                    aria-controls="navbarClient" aria-expanded="false" aria-label="Ouvrir le menu de navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarClient">
@@ -66,10 +69,13 @@
 <header th:fragment="header-admin">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/admin">
-                <i class="bi bi-speedometer2"></i> M-Motors Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
+            <div class="h5 mb-0">
+                <a class="navbar-brand d-inline-block" href="/admin" aria-label="Accueil administration M-Motors">
+                    <i class="bi bi-speedometer2" aria-hidden="true"></i> M-Motors Admin
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin"
+                    aria-controls="navbarAdmin" aria-expanded="false" aria-label="Ouvrir le menu d'administration">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarAdmin">

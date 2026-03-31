@@ -5,9 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-with, initial-scale=1.0">
     <title>M-Motors - Vente et location de véhicules d'occasion</title>
+    <meta name="description" th:if="${metaDescription != null}" th:attr="content=${metaDescription}" />
+    <meta name="description" th:if="${metaDescription == null}" content="M-Motors, spécialiste de la vente et de la location de véhicules d'occasion : découvrez notre catalogue, nos offres de location longue durée et nos services adaptés." />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body>
 <div th:replace="fragments/header :: header-client"></div>
@@ -17,7 +20,7 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h1 class="display-4 fw-bold">Bienvenue chez M-Motors</h1>
-                <p class="lead text-muted">
+                <p class="lead text-dark">
                     Spécialiste de la vente et location de véhicules d'occasion depuis 1987
                 </p>
                 <p class="mb-4">
@@ -39,11 +42,11 @@
         </div>
     </div>
 </section>
-<div th:if="${accountDeletedMessage}" class="container mt-3">
+    <div th:if="${accountDeletedMessage}" class="container mt-3">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill"></i>
         Votre compte a été supprimé avec succès. Vos données ont été effacées conformément au RGPD.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de suppression de compte"></button>
     </div>
 </div>
 <section class="py-5"><div class="container">

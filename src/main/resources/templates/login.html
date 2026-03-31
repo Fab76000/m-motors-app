@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - M-Motors</title>
+    <meta name="description" th:if="${metaDescription != null}" th:attr="content=${metaDescription}" />
+    <meta name="description" th:if="${metaDescription == null}" content="Connectez-vous à votre compte M-Motors pour gérer vos réservations, dossiers et préférences. Accès sécurisé pour clients et administrateurs." />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body class="bg-ligh d-flex flex-column min-vh-100">
 
@@ -17,39 +20,39 @@
         <div class="col-md-5 col-lg-4">
             <div class="card shadow">
                 <div class="card-body p-4">
-                    <h2 class="card-title text-center mb-4">
+                    <h1 class="card-title text-center mb-4">
                         <i class="bi bi-box-arrow-in-right text-primary"></i>
                         Connexion
-                    </h2>
+                    </h1>
 
                     <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill"></i>
                         Inscription réussie ! Vous pouvez maintenant vous connecter.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte d'inscription réussie"></button>
                     </div>
 
                     <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="bi bi-info-circle-fill"></i>
                         Vous avez été déconnecté avec succès.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de déconnexion"></button>
                     </div>
 
                     <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-triangle-fill"></i>
                         Email ou mot de passe incorrect.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte d'erreur de connexion"></button>
                     </div>
 
                     <div th:if="${emailChangedMessage}" class="alert alert-info alert-dismissible fade show" role="alert">
                         <i class="bi bi-info-circle-fill"></i>
                         Votre email a été modifié. Veuillez vous reconnecter avec votre nouvel email.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de modification d'email"></button>
                     </div>
 
                     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                         <i class="bi bi-check-circle-fill"></i>
                         <span th:text="${successMessage}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de succès"></button>
                     </div>
 
                     <form th:action="@{/login}" method="post">
@@ -95,13 +98,13 @@
                     </form>
 
                     <div class="text-center mt-3">
-                        <a href="#" class="text-decoration-none text-muted small">
+                        <a href="#" class="text-decoration-none text-dark small">
                             <i class="bi bi-question-circle"></i> Mot de passe oublié ?
                         </a>
                     </div>
 
                     <div class="text-center mt-3">
-                        <p class="text-muted">
+                        <p class="text-dark">
                             Pas encore de compte ?
                             <a href="/register" class="text-decoration-none">S'inscrire</a>
                         </p>
