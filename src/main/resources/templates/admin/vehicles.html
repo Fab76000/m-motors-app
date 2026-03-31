@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion véhicules - M-Motors Admin</title>
-
+    <meta name="description" th:if="${metaDescription != null}" th:attr="content=${metaDescription}" />
+    <meta name="description" th:if="${metaDescription == null}" content="Administration : parc de véhicules M-Motors. Gérez l'inventaire, les disponibilités et les fiches véhicules." />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body class="bg-ligh d-flex flex-column min-vh-100">
 <div th:replace="fragments/header :: header-admin"></div>
@@ -17,7 +19,7 @@
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle-fill"></i>
         <span th:text="${successMessage}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de succès"></button>
     </div>
 
     <div class="row mb-4">
@@ -104,11 +106,13 @@
                             <div class="btn-group btn-group-sm" role="group">
                                 <a th:href="@{/vehicles/{id}(id=${vehicle.id})}"
                                    class="btn btn-outline-primary"
+                                   th:attr="aria-label=${'Voir le véhicule ' + vehicle.brand + ' ' + vehicle.model}"
                                    title="Voir détails">
-                                    <i class="bi bi-eye"></i>
+                                    <i class="bi bi-eye" aria-hidden="true"></i>
                                 </a>
                                 <button type="button"
                                         class="btn btn-outline-warning"
+                                        th:attr="aria-label=${'Changer le type du véhicule ' + vehicle.brand + ' ' + vehicle.model}"
                                         title="Changer le type"
                                         data-bs-toggle="modal"
                                         data-bs-target="#switchModal"
@@ -117,23 +121,25 @@
                                         th:data-vehicle-model="${vehicle.model}"
                                         th:data-current-type="${vehicle.type.name()}"
                                         onclick="openSwitchModal(this)">
-                                    <i class="bi bi-arrow-left-right"></i>
+                                    <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
                                 </button>
                                 <a th:href="@{/admin/vehicles/{id}/edit(id=${vehicle.id})}"
                                    class="btn btn-outline-secondary"
+                                   th:attr="aria-label=${'Modifier le véhicule ' + vehicle.brand + ' ' + vehicle.model}"
                                    title="Modifier">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil" aria-hidden="true"></i>
                                 </a>
 
                                 <button type="button"
                                         class="btn btn-outline-danger"
+                                        th:attr="aria-label=${'Supprimer le véhicule ' + vehicle.brand + ' ' + vehicle.model}"
                                         title="Supprimer"
                                         data-bs-toggle="modal"
                                         data-bs-target="#deleteModal"
                                         th:data-vehicle-id="${vehicle.id}"
                                         th:data-vehicle-info="${vehicle.brand + ' ' + vehicle.model}"
                                         onclick="openDeleteModal(this)">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </td>
@@ -154,8 +160,10 @@
         <div class="modal-content">
             <form th:action="@{/admin/vehicles/{id}/switch(id=0)}" method="post" id="switchForm">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="switchModalLabel">Changer le type de véhicule</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h2 class="modal-title h5 mb-0" id="switchModalLabel" role="heading" aria-level="2">
+                        <span>Changer le type de véhicule</span>
+                    </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer la fenêtre changer le type de véhicule"></button>
                 </div>
                 <div class="modal-body">
                     <p class="mb-3">
@@ -205,10 +213,11 @@
         <div class="modal-content">
             <form th:action="@{/admin/vehicles/0/delete}" method="post" id="deleteForm">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteModalLabel">
-                        <i class="bi bi-trash"></i> Supprimer le véhicule
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h2 class="modal-title h5 mb-0" id="deleteModalLabel" role="heading" aria-level="2">
+                        <i class="bi bi-trash" aria-hidden="true"></i>
+                        <span>Supprimer le véhicule</span>
+                    </h2>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer la fenêtre Supprimer le véhicule"></button>
                 </div>
                 <div class="modal-body">
                     <p class="mb-3">

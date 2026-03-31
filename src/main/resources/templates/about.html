@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>À propos - M-Motors</title>
+    <meta name="description" th:if="${metaDescription != null}" th:attr="content=${metaDescription}" />
+    <meta name="description" th:if="${metaDescription == null}" content="En savoir plus sur M-Motors : notre histoire, nos engagements qualité, et notre expertise dans la vente et la location de véhicules d'occasion." />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body class="bg-ligh d-flex flex-column min-vh-100">
 
-<div th:replace="~{fragments/header :: header-client}"></div><div class="bg-primary text-white py-5">
+<div th:replace="~{fragments/header :: header-client}"></div>
+<div class="bg-primary text-white py-5">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
@@ -66,7 +70,7 @@
                             <i class="bi bi-shield-check display-3 text-primary"></i>
                         </div>
                         <h3 class="h5">Confiance</h3>
-                        <p class="text-muted">
+                        <p class="text-dark">
                             Transparence totale sur l'état de chaque véhicule, avec contrôles techniques approfondis
                             et historique complet.
                         </p>
@@ -80,7 +84,7 @@
                             <i class="bi bi-star display-3 text-primary"></i>
                         </div>
                         <h3 class="h5">Qualité</h3>
-                        <p class="text-muted">
+                        <p class="text-dark">
                             Sélection rigoureuse de véhicules en excellent état mécanique, garantissant fiabilité
                             et sécurité pour nos clients.
                         </p>
@@ -94,7 +98,7 @@
                             <i class="bi bi-people display-3 text-primary"></i>
                         </div>
                         <h3 class="h5">Proximité</h3>
-                        <p class="text-muted">
+                        <p class="text-dark">
                             Accompagnement personnalisé par nos conseillers experts qui vous aident à trouver
                             le véhicule parfait pour vous.
                         </p>
@@ -155,28 +159,28 @@
                         <div class="mb-3">
                             <i class="bi bi-shield-fill-check display-4"></i>
                         </div>
-                        <h4 class="h6">Garantie qualité</h4>
+                        <h3 class="h6">Garantie qualité</h3>
                         <p class="small">Tous nos véhicules sont contrôlés par nos experts</p>
                     </div>
                     <div class="col-md-3 text-center">
                         <div class="mb-3">
                             <i class="bi bi-headset display-4"></i>
                         </div>
-                        <h4 class="h6">Service client</h4>
+                        <h3 class="h6">Service client</h3>
                         <p class="small">Une équipe à votre écoute du lundi au samedi</p>
                     </div>
                     <div class="col-md-3 text-center">
                         <div class="mb-3">
                             <i class="bi bi-cash-coin display-4"></i>
                         </div>
-                        <h4 class="h6">Prix transparents</h4>
+                        <h3 class="h6">Prix transparents</h3>
                         <p class="small">Pas de frais cachés, tarifs clairs et compétitifs</p>
                     </div>
                     <div class="col-md-3 text-center">
                         <div class="mb-3">
                             <i class="bi bi-lock-fill display-4"></i>
                         </div>
-                        <h4 class="h6">Données sécurisées</h4>
+                        <h3 class="h6">Données sécurisées</h3>
                         <p class="small">Protection RGPD de vos informations personnelles</p>
                     </div>
                 </div>
@@ -193,7 +197,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="display-4 text-primary fw-bold">1987</h3>
-                        <p class="text-muted mb-0">Année de création</p>
+                        <p class="text-dark mb-0">Année de création</p>
                     </div>
                 </div>
             </div>
@@ -201,7 +205,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="display-4 text-primary fw-bold">800</h3>
-                        <p class="text-muted mb-0">Employés dévoués</p>
+                        <p class="text-dark mb-0">Employés dévoués</p>
                     </div>
                 </div>
             </div>
@@ -209,7 +213,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="display-4 text-primary fw-bold">1M+</h3>
-                        <p class="text-muted mb-0">Clients satisfaits</p>
+                        <p class="text-dark mb-0">Clients satisfaits</p>
                     </div>
                 </div>
             </div>
@@ -217,7 +221,7 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <h3 class="display-4 text-primary fw-bold">Top 10</h3>
-                        <p class="text-muted mb-0">En France</p>
+                        <p class="text-dark mb-0">En France</p>
                     </div>
                 </div>
             </div>

@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes dossiers - M-Motors</title>
+    <meta name="description" th:if="${metaDescription != null}" th:attr="content=${metaDescription}" />
+    <meta name="description" th:if="${metaDescription == null}" content="Consultez vos dossiers clients, suivez l'avancement des validations et gérez vos documents depuis votre espace M-Motors." />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
 
@@ -28,7 +31,7 @@
                 <h1 class="display-5">
                     <i class="bi bi-folder text-primary"></i> Mes dossiers
                 </h1>
-                <p class="text-muted">
+                <p class="text-dark">
                     Bonjour <strong th:text="${user.firstName + ' ' + user.lastName}">Utilisateur</strong>,
                     voici la liste de vos demandes d'achat et de location.
                 </p>
@@ -42,12 +45,12 @@
 
         <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer l'alerte de succès"></button>
         </div>
 
-        <div th:if="${dossiers.isEmpty()}" class="text-center py-5">
-            <i class="bi bi-inbox display-1 text-muted"></i>
-            <p class="lead text-muted mt-3">Vous n'avez aucun dossier en cours</p>
+            <div th:if="${dossiers.isEmpty()}" class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-dark"></i>
+            <p class="lead text-dark mt-3">Vous n'avez aucun dossier en cours</p>
             <a href="/vehicles" class="btn btn-primary">
                 <i class="bi bi-search"></i> Rechercher un véhicule
             </a>
@@ -70,9 +73,10 @@
                     </div>
 
                     <div class="card-body">
-                        <h5 class="card-title">
+                        <h2 class="card-title h5">
+                            <i class="bi bi-car-front-fill" aria-hidden="true"></i>
                             <span th:text="${dossier.vehicle.brand + ' ' + dossier.vehicle.model}">Peugeot 308</span>
-                        </h5>
+                        </h2>
 
                         <!-- Infos véhicule -->
                         <p class="text-muted mb-2">
